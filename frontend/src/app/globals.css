@@ -1,0 +1,87 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  --accent: #ff5a1f;
+  --accent-deep: #ff3d00;
+  --surface: rgba(255, 255, 255, 0.06);
+  --surface-strong: rgba(255, 255, 255, 0.1);
+  --border: rgba(255, 255, 255, 0.1);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top right, rgba(255, 61, 0, 0.18), transparent 24%),
+    radial-gradient(circle at 15% 20%, rgba(255, 90, 31, 0.12), transparent 26%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent 35%),
+    #0a0a0a;
+  color: #f5f1e8;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+::selection {
+  background: rgba(255, 90, 31, 0.25);
+}
+
+.panel-grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-position: center;
+  background-size: 28px 28px;
+}
+
+.accent-glow {
+  box-shadow:
+    0 0 0 1px rgba(255, 90, 31, 0.16),
+    0 30px 80px rgba(255, 61, 0, 0.15);
+}
+
+@keyframes pulse-track {
+  0%,
+  100% {
+    transform: scaleX(0.98);
+    opacity: 0.85;
+  }
+  50% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+
+@keyframes fade-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-rise {
+  animation: fade-rise 700ms ease forwards;
+}
+
+.animate-pulse-track {
+  animation: pulse-track 1800ms ease-in-out infinite;
+  transform-origin: left center;
+}

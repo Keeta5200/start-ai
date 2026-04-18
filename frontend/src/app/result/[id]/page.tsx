@@ -1,0 +1,300 @@
+import { AppShell } from "@/components/app-shell";
+import { AnalysisPolling } from "@/components/analysis-polling";
+import { FeedbackSection } from "@/components/feedback-section";
+import { ResultCard } from "@/components/result-card";
+import { ScoreDisplay } from "@/components/score-display";
+import { getAnalysis } from "@/lib/api";
+import { toHundredPointScore } from "@/lib/score";
+
+export const dynamic = "force-dynamic";
+
+function formatAnalysisStatus(status: string) {
+  const labels: Record<string, string> = {
+    uploaded: "アップロード済み",
+    queued: "待機中",
+    processing: "解析中",
+    completed: "完了",
+    failed: "失敗"
+  };
+
+  return labels[status] ?? status;
+}
+
+function extractWarnings(debugMetrics: Record<string, unknown> | undefined) {
+  const warnings = debugMetrics?.warnings;
+  if (!Array.isArray(warnings)) {
+    return [];
+  }
+  return warnings.filter((item): item is string => typeof item === "string");
+}
+
+function localizeWarning(warning: string) {
+  const warningMap: Record<string, string> = {
+    "Low-confidence pose detection across the clip.":
+      "姿勢推定の信頼度が低く、今回は参考値になりやすい映像です。",
+    "Pose confidence is moderate; event timing may need review.":
+      "姿勢推定の安定度が十分ではなく、接地タイミングにズレが出る可能性があります。",
+    "Landmarks were missing in too many frames for reliable sprint analysis.":
+      "フレーム内で姿勢点が欠ける場面が多く、解析精度が下がっています。",
+    "Athlete appears partially cut off near the frame edges.":
+      "選手の身体や足元が画面端で切れており、参考値として見るのが安全です。",
+    "Clip is short for stable step-phase validation.":
+      "動画が短く、set から3歩目までの判定が安定しにくいです。"
+  };
+
+  return warningMap[warning] ?? warning;
+}
+
+function normalizeStoredFeedbackText(text: string) {
+  return text
+    // 旧メカニクス概要「〜を見ています」パターンを実際のフィードバックに変換
+    .replace(/接地で地面を押した力が、そのまま前に進む力へ変わっているかを見ています。/g,
+      "接地反力をスピードに変換できており、推進への連結は安定しています。")
+    .replace(/スタート直後の力の向きが、低く前へ向いているかを見ています。/g,
+      "ドライブ方向は前向きにまとまっており、スピードへの変換効率は良好です。")
+    .replace(/一歩目スイッチで足が前に流れず、体の真下へ戻るかを見ています。/g,
+      "一歩目接地のブレーキング成分は少なく、スピードの継続性は良好です。")
+    .replace(/最初の3歩をつなぐ加速リズムは、現時点で比較的まとまっています。/g,
+      "初期加速のリズムは整っており、スピードを連続して積み上げられています。")
+    .replace(/最初の3歩で推進を切らさず、加速を連結できているかを見ています。/g,
+      "初期加速のリズムは整っており、スピードを連続して積み上げられています。")
+    .replace(/スタートで低く前に出る準備ができているかを見ています。/g,
+      "セットポジションは適正で、スタートシグナルへの即応準備が整っています。")
+    // 旧フィードバック文の改善
+    .replace(/接地で受けた力が前に進む力へ変わり切っていません。/g,
+      "接地反力の一部がスピードに変換されていません。改善すると加速出力が直接上がります。")
+    .replace(/押し出しが少し上へ逃げ、前へ出る動きが弱くなっています。/g,
+      "ドライブ時に力が上方に逃げており、スピードへの変換効率が低下しています。")
+    .replace(/一歩目で足が前に流れ、接地がブレーキ寄りです。/g,
+      "一歩目接地でわずかなブレーキングが生じており、スピードの一部が失われています。")
+    .replace(/接地ごとの前進が細切れで、初期加速がつながり切っていません。/g,
+      "ストライド間でスピードの積み上げが途切れており、加速効率の改善余地があります。")
+    // 旧ラベルを新ラベルに統一
+    .replace(/接地の質/g, "接地推進力")
+    .replace(/一歩目スイッチ/g, "一歩目接地")
+    .replace(/加速の連結/g, "重心前進連続性")
+    .replace(/腕振りと脚の連動/g, "腕脚協調")
+    .replace(/セット姿勢/g, "セットポジション")
+    .replace(/押し出し方向/g, "ドライブ方向")
+    // 簡略化された語彙を運動学的表現に戻す
+    .replace(/もも付け根/g, "股関節")
+    .replace(/前に進む力/g, "推進力")
+    .replace(/前に進む効率/g, "推進効率")
+    .replace(/地面を押した力/g, "地面反力")
+    .replace(/力の向き/g, "推進ベクトル")
+    .replace(/低く前に出る形/g, "低重心前傾姿勢")
+    // 旧フィードバックの語尾・表現の統一
+    .replace(/足の回転だけが先に速くなりやすいです/g, "ピッチが先行しやすい状態です")
+    .replace(/足だけが先に回りやすくなっています/g, "ピッチ先行型のパターンが生じています")
+    .replace(/足[^。]*先に速くなるになりやすいです/g, "ピッチが先行しやすい状態です")
+    .replace(/足[^。]*先に速くなりやすいです/g, "ピッチが先行しやすい状態です")
+    .replace(/足[^。]*先に回りやすくなっています/g, "ピッチ先行型のパターンが生じています")
+    .replace(/足[^。]*先に回ってしまいやすいです/g, "ピッチ先行型のパターンが生じています")
+    .replace(/足が足が前に流れることせず/g, "足が前に流れず")
+    .replace(/足が前に流れることせず/g, "足が前に流れず")
+    .replace(/接地地面を押した力/g, "接地で地面反力を")
+    .replace(/切り替えとタイミングさせてください/g, "切り替えのタイミングを合わせてください")
+    .replace(/切り返し/g, "切り返し")
+    .replace(/動きのつながり/g, "推進力の連続性")
+    .replace(/タイミング/g, "タイミング");
+}
+
+function normalizeFeedbackPayload<T>(value: T): T {
+  if (typeof value === "string") {
+    return normalizeStoredFeedbackText(value) as T;
+  }
+  if (Array.isArray(value)) {
+    return value.map((item) => normalizeFeedbackPayload(item)) as T;
+  }
+  if (value && typeof value === "object") {
+    return Object.fromEntries(
+      Object.entries(value).map(([key, item]) => [key, normalizeFeedbackPayload(item)])
+    ) as T;
+  }
+  return value;
+}
+
+export default async function ResultPage({ params }: { params: { id: string } }) {
+  let analysis;
+  try {
+    analysis = await getAnalysis(params.id);
+  } catch {
+    return (
+      <AppShell
+        title={`結果 ${params.id}`}
+        subtitle="結果データの取得に失敗しました。バックエンドの起動状況を確認して、もう一度開いてください。"
+      >
+        <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-8">
+          <p className="text-base text-bone">結果ページの読み込みに失敗しました。</p>
+          <p className="mt-3 text-sm leading-7 text-fog">
+            API 応答エラーの可能性があります。数秒待って再読み込みしてください。
+          </p>
+        </div>
+      </AppShell>
+    );
+  }
+  const result = analysis.result_payload;
+
+  if (!result) {
+    return (
+      <AppShell
+        title={`結果 ${params.id}`}
+        subtitle="解析ジョブは開始されていますが、まだ結果の生成が終わっていません。"
+      >
+        <AnalysisPolling active />
+        <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-8">
+          <p className="text-base text-bone">解析を実行中です。</p>
+          <p className="mt-3 text-sm leading-7 text-fog">
+            数秒ごとに自動で更新しています。しばらくそのままでお待ちください。
+          </p>
+        </div>
+      </AppShell>
+    );
+  }
+
+  const feedback = normalizeFeedbackPayload(result.feedback ?? {
+    primary_diagnosis: result.primary_diagnosis ?? "解析レビュー待ち",
+    headline: "フォーム全体の所見をまとめています。",
+    summary: "フィードバックはまだ生成されていません。",
+    strengths: [],
+    priorities: [],
+    coaching_cues: [],
+    mechanics_overview: [],
+    coaching_focus: []
+  });
+  const analysisWarnings = extractWarnings(result.debug_metrics);
+  const shouldShowReferenceNotice = analysisWarnings.length > 0;
+  const mechanicsOverview = feedback.mechanics_overview?.length
+    ? feedback.mechanics_overview
+    : [
+        {
+          key: "ground_contact",
+          title: "接地推進力",
+          status: "良好",
+          summary: "接地反力をスピードに変換できており、推進への連結は安定しています。"
+        },
+        {
+          key: "push_direction",
+          title: "ドライブ方向",
+          status: "要改善",
+          summary: "ドライブ時に力が上方に逃げており、スピードへの変換効率が低下しています。"
+        },
+        {
+          key: "first_step_landing",
+          title: "一歩目接地",
+          status: "要改善",
+          summary: "一歩目接地でわずかなブレーキングが生じており、スピードの一部が失われています。"
+        },
+        {
+          key: "forward_com",
+          title: "重心前進連続性",
+          status: "良好",
+          summary: "初期加速のリズムは整っており、スピードを連続して積み上げられています。"
+        }
+      ];
+  const keyFrameImages = (result.key_frame_images ?? {}) as Record<string, string>;
+  const keyFrameOrder = ["set", "first_contact", "second_contact", "third_contact"] as const;
+  const keyFrameLabels: Record<string, string> = {
+    set: "セット",
+    first_contact: "1歩目接地",
+    second_contact: "2歩目接地",
+    third_contact: "3歩目接地",
+  };
+  const availableKeyFrames = keyFrameOrder.filter((k) => keyFrameImages[k]);
+
+  const coachingFocus = feedback.coaching_focus?.length
+    ? feedback.coaching_focus
+    : feedback.coaching_cues.map((item, index) => ({
+        title: `ポイント ${index + 1}`,
+        ideal: "理想の動きに近づけるための視点です。",
+        current: item,
+        action: item
+      }));
+
+  return (
+    <AppShell
+      title={`結果 ${params.id}`}
+      subtitle="アップロードされたスタート動画に対する解析結果です。推進力、押し出し方向、最初の3歩の質に着目しています。"
+    >
+      <AnalysisPolling active={analysis.status === "queued" || analysis.status === "processing"} />
+      {shouldShowReferenceNotice ? (
+        <div className="mb-6 rounded-[1.5rem] border border-amber-400/20 bg-amber-500/10 px-6 py-5">
+          <p className="text-xs uppercase tracking-[0.28em] text-amber-300">解析精度について</p>
+          <p className="mt-3 text-base leading-7 text-bone/90">
+            今回の結果は参考値です。撮影条件の影響で、通常より解析精度が下がっています。
+          </p>
+          <div className="mt-3 space-y-2 text-sm leading-7 text-bone/80">
+            {analysisWarnings.map((warning) => (
+              <p key={warning}>{localizeWarning(warning)}</p>
+            ))}
+          </div>
+        </div>
+      ) : null}
+      {availableKeyFrames.length > 0 && (
+        <section className="mb-6 rounded-[2rem] border border-white/10 bg-white/[0.04] p-8">
+          <p className="text-xs uppercase tracking-[0.35em] text-fog">キーフレーム骨格</p>
+          <p className="mt-2 text-sm text-fog">セットから3歩目までの接地瞬間の姿勢を骨格で可視化しています。</p>
+          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {availableKeyFrames.map((key) => (
+              <div key={key} className="space-y-2">
+                <p className="text-xs uppercase tracking-[0.28em] text-ember">{keyFrameLabels[key]}</p>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={`data:image/jpeg;base64,${keyFrameImages[key]}`}
+                  alt={keyFrameLabels[key]}
+                  className="w-full rounded-xl border border-white/10 object-cover"
+                />
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+      <div className="grid gap-6 xl:grid-cols-[0.8fr_1.2fr]">
+        <div className="space-y-6">
+          <ScoreDisplay
+            score={toHundredPointScore(result.final_score)}
+            label="総合スコア"
+            helperText="総合スコアはモチベーション用の目安です。実際の改善では、右側のコーチング所見と4項目のメカニクス評価を優先して見てください。"
+          />
+
+          <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-6">
+            <div className="flex items-center justify-between">
+              <p className="text-xs uppercase tracking-[0.35em] text-fog">解析状態</p>
+              <p className="rounded-full border border-ember/30 bg-ember/10 px-4 py-2 text-xs uppercase tracking-[0.28em] text-ember">
+                {formatAnalysisStatus(analysis.status)}
+              </p>
+            </div>
+            <p className="mt-5 text-sm leading-7 text-fog">
+              解析ID: {params.id}
+            </p>
+          </div>
+        </div>
+
+        <div className="space-y-6">
+          <section className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-8">
+            <p className="text-xs uppercase tracking-[0.35em] text-fog">メカニクス概要</p>
+            <div className="mt-6 grid gap-4 md:grid-cols-2">
+              {mechanicsOverview.map((item, index) => (
+                <ResultCard
+                  key={item.key}
+                  title={item.title}
+                  value={item.status}
+                  subtitle={item.summary}
+                  accent={index === 0}
+                />
+              ))}
+            </div>
+          </section>
+
+          <FeedbackSection
+            diagnosis={feedback.primary_diagnosis}
+            headline={feedback.headline ?? feedback.summary}
+            summary={feedback.summary}
+            strengths={feedback.strengths}
+            coachingFocus={coachingFocus}
+          />
+        </div>
+      </div>
+    </AppShell>
+  );
+}
