@@ -64,6 +64,7 @@ export function LoginForm({ nextPath }: { nextPath?: string }) {
   return (
     <form
       onSubmit={handleSubmit}
+      autoComplete="on"
       className="w-full max-w-md rounded-[2rem] border border-white/10 bg-white/5 p-8 shadow-panel"
     >
       <p className="text-xs uppercase tracking-[0.35em] text-fog">ログイン</p>
@@ -75,7 +76,7 @@ export function LoginForm({ nextPath }: { nextPath?: string }) {
           className="w-full rounded-2xl border border-white/10 bg-transparent px-4 py-4 text-base outline-none placeholder:text-fog focus:border-ember"
           type="email"
           name="email"
-          autoComplete="email"
+          autoComplete="username"
           placeholder="メールアドレス"
           value={email}
           onChange={(event) => setEmail(event.target.value)}
