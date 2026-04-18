@@ -1,9 +1,10 @@
+import { redirect } from "next/navigation";
 import { AppShell } from "@/components/app-shell";
 import { AnalysisPolling } from "@/components/analysis-polling";
 import { FeedbackSection } from "@/components/feedback-section";
 import { ResultCard } from "@/components/result-card";
 import { ScoreDisplay } from "@/components/score-display";
-import { getAnalysis } from "@/lib/api";
+import { getAnalysis, ApiError } from "@/lib/api";
 import { toHundredPointScore } from "@/lib/score";
 
 export const dynamic = "force-dynamic";
@@ -109,16 +110,19 @@ export default async function ResultPage({ params }: { params: { id: string } })
   let analysis;
   try {
     analysis = await getAnalysis(params.id);
-  } catch {
+  } catch (err) {
+    if (err instanceof ApiError && err.status === 401) {
+      redirect(`/login?next=/result/${params.id}`);
+    }
     return (
       <AppShell
-        title={`結果 ${params.id}`}
-        subtitle="結果データの取得に失敗しました。バックエンドの起動状況を確認して、もう一度開いてください。"
+        title="結果の読み込みに失敗"
+        subtitle="しばらく待ってから再度お試しください。"
       >
         <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-8">
-          <p className="text-base text-bone">結果ページの読み込みに失敗しました。</p>
+          <p className="text-base text-bone">結果データの取得に失敗しました。</p>
           <p className="mt-3 text-sm leading-7 text-fog">
-            API 応答エラーの可能性があります。数秒待って再読み込みしてください。
+            数秒待ってからページを再読み込みしてください。
           </p>
         </div>
       </AppShell>
