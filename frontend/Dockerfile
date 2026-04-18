@@ -1,29 +1,18 @@
-FROM node:20-alpine AS deps
+FROM node:20-alpine
 WORKDIR /app
 
 COPY package.json package-lock.json ./
 RUN npm ci
 
-FROM node:20-alpine AS builder
-WORKDIR /app
-
-ARG CACHEBUST=1
-COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-
-RUN npm run build
-
-FROM node:20-alpine AS runner
-WORKDIR /app
+RUN npm run build && \
+    cp -r public .next/standalone/ && \
+    cp -r .next/static .next/standalone/.next/
 
 ENV NODE_ENV=production
-ENV PORT=3000
+ENV PORT=8080
 ENV HOSTNAME=0.0.0.0
 
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
+EXPOSE 8080
 
-EXPOSE 3000
-
-CMD ["node", "server.js"]
+CMD ["node", ".next/standalone/server.js"]
