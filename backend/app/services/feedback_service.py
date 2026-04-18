@@ -5,12 +5,12 @@ from typing import Any
 
 
 SCORE_LABELS = {
-    "start_posture": "セットポジション",
-    "push_direction": "ドライブ方向",
-    "first_step_landing": "一歩目接地",
-    "ground_contact": "接地推進力",
-    "forward_com": "加速の流れ",
-    "arm_leg_coordination": "腕脚の連動",
+    "start_posture": "スタートの構え",
+    "push_direction": "前への出方",
+    "first_step_landing": "最初の一歩",
+    "ground_contact": "地面の押し方",
+    "forward_com": "加速のつながり",
+    "arm_leg_coordination": "腕と脚の合わせ",
 }
 
 PRIMARY_DIAGNOSIS_LABELS = {
