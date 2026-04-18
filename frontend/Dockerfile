@@ -6,7 +6,8 @@ RUN npm ci
 
 COPY . .
 RUN npm run build && \
-    cp -r public .next/standalone/ && \
+    mkdir -p .next/standalone/public && \
+    (cp -r public/. .next/standalone/public/ 2>/dev/null || true) && \
     cp -r .next/static .next/standalone/.next/
 
 ENV NODE_ENV=production
