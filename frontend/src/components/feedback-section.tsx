@@ -5,6 +5,13 @@ type CoachingFocusItem = {
   action: string;
 };
 
+type PracticeRecommendation = {
+  title: string;
+  drills: string[];
+  focus: string;
+  suggestion: string;
+};
+
 function normalizeFeedbackText(text: string) {
   return text
     // 旧メカニクス概要「〜を見ています」パターン
@@ -49,19 +56,20 @@ function normalizeFeedbackText(text: string) {
     .replace(/足が前に流れることせず/g, "足が前に流れず")
     .replace(/切り替えとタイミングさせてください/g, "切り替えのタイミングを合わせてください");
 }
-
 export function FeedbackSection({
   diagnosis,
   headline,
   summary,
   strengths,
-  coachingFocus
+  coachingFocus,
+  practiceRecommendations: _practiceRecommendations
 }: {
   diagnosis: string;
   headline: string;
   summary: string;
   strengths: string[];
   coachingFocus: CoachingFocusItem[];
+  practiceRecommendations: PracticeRecommendation[];
 }) {
   return (
     <section className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-8">

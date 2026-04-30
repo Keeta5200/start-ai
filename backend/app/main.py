@@ -6,6 +6,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api.router import api_router
 from app.core.config import get_settings
 from app.db.init_db import init_db
+from app.services.analysis_service import (
+    cleanup_terminal_analysis_assets,
+    expire_abandoned_analyses,
+    requeue_stale_analyses,
+)
 
 settings = get_settings()
 
@@ -13,6 +18,9 @@ settings = get_settings()
 @asynccontextmanager
 async def lifespan(_: FastAPI):
     await init_db()
+    await expire_abandoned_analyses()
+    await cleanup_terminal_analysis_assets()
+    await requeue_stale_analyses()
     yield
 
 

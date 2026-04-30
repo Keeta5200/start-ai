@@ -38,7 +38,7 @@ async function proxyRequest(
     init.body = await request.arrayBuffer();
   }
 
-  const upstreamResponse = await fetch(upstreamUrl, init);
+  const upstreamResponse = await fetchWithRetry(upstreamUrl, init);
   const responseHeaders = new Headers(upstreamResponse.headers);
 
   responseHeaders.delete("content-encoding");
@@ -49,6 +49,36 @@ async function proxyRequest(
     statusText: upstreamResponse.statusText,
     headers: responseHeaders
   });
+}
+
+async function fetchWithRetry(url: string, init: RequestInit) {
+  let lastError: unknown;
+
+  for (let attempt = 1; attempt <= 4; attempt += 1) {
+    try {
+      const response = await fetch(url, init);
+      if (!shouldRetryResponse(response.status) || attempt === 4) {
+        return response;
+      }
+    } catch (error) {
+      lastError = error;
+      if (attempt === 4) {
+        throw error;
+      }
+    }
+
+    await wait(1500 * attempt);
+  }
+
+  throw lastError ?? new Error("Upstream request failed");
+}
+
+function shouldRetryResponse(status: number) {
+  return status === 425 || status === 429 || status === 500 || status === 502 || status === 503 || status === 504;
+}
+
+function wait(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 export {

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ReactNode } from "react";
+import { AnalysisJobTracker } from "@/components/analysis-job-tracker";
 import { LogoutButton } from "@/components/logout-button";
 
 const navItems = [
@@ -43,7 +44,10 @@ export function AppShell({
           </nav>
         </header>
 
-        <main className="flex-1 py-8">{children}</main>
+        <main className="flex-1 py-8">
+          <AnalysisJobTracker />
+          {children}
+        </main>
       </div>
     </div>
   );

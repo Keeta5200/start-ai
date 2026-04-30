@@ -1,11 +1,20 @@
 "use client";
 
-import { buildExpiredAuthCookie, buildExpiredTokenCookie } from "@/lib/auth";
+import {
+  buildExpiredAuthCookie,
+  buildExpiredTokenCookie,
+  clearPendingAnalysis,
+  removeLocalStorageItem,
+  removeSessionStorageItem,
+} from "@/lib/auth";
 
 export function LogoutButton() {
   function handleLogout() {
-    localStorage.removeItem("start-ai-token");
-    localStorage.removeItem("start-ai-user");
+    removeLocalStorageItem("start-ai-token");
+    removeLocalStorageItem("start-ai-user");
+    clearPendingAnalysis();
+    removeSessionStorageItem("start-ai-token");
+    removeSessionStorageItem("start-ai-user");
     document.cookie = buildExpiredAuthCookie();
     document.cookie = buildExpiredTokenCookie();
     window.location.href = "/login";

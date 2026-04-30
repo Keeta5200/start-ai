@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { AUTH_COOKIE_NAME, AUTH_COOKIE_VALUE } from "@/lib/auth";
+import { AUTH_COOKIE_NAME, AUTH_COOKIE_VALUE, AUTH_TOKEN_COOKIE_NAME } from "@/lib/auth";
 
 const protectedPrefixes = ["/dashboard", "/upload", "/result"];
 
 function isAuthenticated(request: NextRequest) {
-  return request.cookies.get(AUTH_COOKIE_NAME)?.value === AUTH_COOKIE_VALUE;
+  const hasSessionCookie = request.cookies.get(AUTH_COOKIE_NAME)?.value === AUTH_COOKIE_VALUE;
+  const hasTokenCookie = Boolean(request.cookies.get(AUTH_TOKEN_COOKIE_NAME)?.value);
+  return hasSessionCookie && hasTokenCookie;
 }
 
 export function middleware(request: NextRequest) {

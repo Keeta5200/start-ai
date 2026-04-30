@@ -51,6 +51,12 @@ export interface AnalysisFeedback {
     current: string;
     action: string;
   }[];
+  practice_recommendations?: {
+    title: string;
+    drills: string[];
+    focus: string;
+    suggestion: string;
+  }[];
   next_session_focus?: string[];
 }
 

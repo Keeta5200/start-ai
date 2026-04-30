@@ -47,14 +47,26 @@ export default async function DashboardPage({
   const sortedAnalyses = [...analyses].sort(
     (left, right) => new Date(right.created_at).getTime() - new Date(left.created_at).getTime()
   );
+  const resolvableAnalyses = sortedAnalyses.filter((analysis) => {
+    if (analysis.status === "completed" || analysis.status === "failed") {
+      return true;
+    }
 
-  const latestCompletedAnalysis = sortedAnalyses.find((analysis) => analysis.status === "completed") ?? null;
+    const createdAtMs = new Date(analysis.created_at).getTime();
+    if (Number.isNaN(createdAtMs)) {
+      return false;
+    }
+
+    return Date.now() - createdAtMs <= 1000 * 60 * 20;
+  });
+
+  const latestCompletedAnalysis = resolvableAnalyses.find((analysis) => analysis.status === "completed") ?? null;
   const showAll = searchParams?.view === "all";
   const visibleAnalyses = showAll
-    ? sortedAnalyses
-    : sortedAnalyses.slice(0, DEFAULT_VISIBLE_ANALYSES);
+    ? resolvableAnalyses
+    : resolvableAnalyses.slice(0, DEFAULT_VISIBLE_ANALYSES);
   const dashboardSummary = getDashboardSummary(
-    sortedAnalyses.length,
+    resolvableAnalyses.length,
     latestCompletedAnalysis?.score ?? null
   );
 
@@ -70,7 +82,7 @@ export default async function DashboardPage({
         />
         <AnalysisList
           analyses={visibleAnalyses}
-          totalCount={sortedAnalyses.length}
+          totalCount={resolvableAnalyses.length}
           showAll={showAll}
         />
       </div>

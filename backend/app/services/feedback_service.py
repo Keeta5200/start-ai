@@ -25,6 +25,225 @@ PRIMARY_DIAGNOSIS_LABELS = {
     "balanced acceleration profile": "大きな崩れはなく、スタートの基本的な動きができています。",
 }
 
+COACHING_PATTERN_LIBRARY = {
+    "ground_contact": {
+        "term": "地面を殺す接地",
+        "pattern": "押し切り不足タイプ",
+        "diagnosis": "接地での沈み込みが強く、踏んだ力が前への推進に変わりきっていません。離地の瞬間まで三関節を伸ばし切ることで、スピードの乗り方が変わります。",
+        "ideal": "離地の瞬間まで股関節・膝・足首を一直線に伸ばし切り、地面を後ろへ送り続けることです。",
+        "cue": "最後まで伸び切ってから離せ",
+    },
+    "push_direction": {
+        "term": "離台が立つ",
+        "pattern": "早起きタイプ（上体先行型）",
+        "diagnosis": "スタート直後から体幹が起き上がっており、加速に必要な前傾角が維持できていません。前に使いたい力が上に抜けて、前方への推進効率が落ちています。",
+        "ideal": "3歩目まで頭と胸を低く保ち、斜め前へ長く押し出し続けることです。",
+        "cue": "低いまま飛び出す、顔は下",
+    },
+    "first_step_landing": {
+        "term": "足が前に流れる",
+        "pattern": "ブレーキ接地タイプ",
+        "diagnosis": "一歩目の足を前に置きにいっており、接地の瞬間にブレーキがかかっています。",
+        "ideal": "一歩目の足を体の真下近くへ鋭く落とし、ブレーキなく前へ乗り続けることです。",
+        "cue": "足は前に出すな、真下に落とせ",
+    },
+    "forward_com": {
+        "term": "失速タイプ",
+        "pattern": "失速タイプ（加速持続不全型）",
+        "diagnosis": "スタート直後の動きは出ていますが、3歩目以降で加速が失速しています。前傾を保ちながら押し切りを継続し、5歩目まで推進を切らさないことが必要です。",
+        "ideal": "一歩ごとに押した力を前進へ変え、3歩目まで流れを切らさず加速を積み上げることです。",
+        "cue": "5歩目まで加速し続けろ",
+    },
+    "arm_leg_coordination": {
+        "term": "腕が遊んでいる",
+        "pattern": "腕遅れタイプ（上肢遅延型）",
+        "diagnosis": "腕振りが脚の動きに対して遅れており、体の軸がブレながら加速しています。肘を素早く引くことで、脚との連動を取り戻してください。",
+        "ideal": "接地の瞬間に反対側の腕が真後ろへ引かれ、腕と脚が同じタイミングで切り替わることです。",
+        "cue": "腕で引っ張って前に出る",
+    },
+    "start_posture": {
+        "term": "骨盤が後傾している",
+        "pattern": "腰抜けタイプ（体幹連動不全型）",
+        "diagnosis": "セットポジションで骨盤が後傾しており、離台後の股関節伸展が使いきれていません。体が割れて、力が全身に伝わりにくくなっています。",
+        "ideal": "頭・肩・腰・足先が一直線でそろい、腰ごと前へ持ち出してスタートできることです。",
+        "cue": "骨盤を立てて、前に向ける",
+    },
+}
+
+DRILL_LIBRARY = {
+    "first_step_landing": {
+        "title": "一歩目の接地を直すドリル",
+        "drills": ["壁押しスタート", "マーカー1歩目ドリル", "緩い下りスタート", "歩幅マーカースタート"],
+        "focus": "足を前に置きにいかず、体の真下へ落としてから後ろへ押す感覚を作ります。",
+        "suggestion": "壁押しスタートや歩幅マーカースタートで、一歩目を体の真下に落とす感覚を繰り返し確認してください。前に足を出す意識ではなく、地面を後ろへ送る意識で行いましょう。",
+        "pitfalls": [
+            "上体だけを前に倒して足だけ遠くへ伸ばさないこと",
+            "一歩目を大きくしようとして腰が後ろに残らないこと",
+        ],
+    },
+    "push_direction": {
+        "title": "前傾を保つドリル",
+        "drills": ["ローリングスタート", "マーカー水平走", "ミニハードル低通過ドリル", "セルフカウントスタート"],
+        "focus": "3〜5歩目まで頭の高さを変えず、低い前傾のまま前へ押し出す感覚を作ります。",
+        "suggestion": "マーカー水平走やセルフカウントスタートで、速く出ることより形を保ったまま低く押し出す感覚を確認してください。『3歩目まで顔を下に向けたまま』を合言葉にすると形が安定しやすいです。",
+        "pitfalls": [
+            "顔だけ下げて胸と腰が止まらないこと",
+            "低さを意識しすぎて押し出しが弱くならないこと",
+        ],
+    },
+    "ground_contact": {
+        "title": "押し切りを強くするドリル",
+        "drills": ["スレッドプッシュ", "片足ドライブドリル", "階段ドライブ走", "高腰維持スキップドリル", "前足部接地ドリル"],
+        "focus": "離地の瞬間まで股関節・膝・足首を伸ばし切り、押し切ってから次へ移る感覚と、接地で沈み込まない高い腰の感覚を作ります。",
+        "suggestion": "負荷を使った押し出し系ドリルに加えて、高腰維持スキップや前足部接地ドリルで、接地の沈み込みを減らしてください。『最後まで押し切らないと進まない』感覚と『踏んだ瞬間に弾き返す』感覚を両方作ることが大切です。",
+        "pitfalls": [
+            "押そうとして長く乗りすぎ、接地が重くならないこと",
+            "前足部だけに意識が寄りすぎて腰が落ちないこと",
+        ],
+    },
+    "forward_com": {
+        "title": "加速の流れをつなぐドリル",
+        "drills": ["5歩限定加速反復", "加速区間分割計測", "3歩限定スタート反復", "歩幅マーカースタート"],
+        "focus": "3〜5歩目でも前傾と押し切りを続け、回転より前への運びを優先する感覚を作ります。",
+        "suggestion": "スタートから3歩目までと4〜6歩目の区間を分けて計測し、どこで加速が止まっているかを把握してください。必要に応じて歩幅マーカースタートも入れ、3歩目以降も前傾と押し切りを継続する感覚を作りましょう。",
+        "pitfalls": [
+            "3歩目で満足して頭を上げないこと",
+            "後半をピッチだけでごまかして歩幅を失わないこと",
+        ],
+    },
+    "arm_leg_coordination": {
+        "title": "腕と脚を合わせるドリル",
+        "drills": ["腕振り単独ドリル", "腕引き意識スタート反復", "壁押し片脚切り替え", "骨盤前傾キープ＋腕振り連動ドリル"],
+        "focus": "肘を鋭く後方へ引き、脚の接地と同じタイミングで腕が切り替わる感覚を作ります。",
+        "suggestion": "座位や立位での腕振り単独ドリルと、骨盤前傾キープ＋腕振り連動ドリルを組み合わせてください。脚が地面に着く瞬間に反対腕を後ろへ引くことが、体軸を安定させる近道です。",
+        "pitfalls": [
+            "腕だけ速く動かして脚とのタイミングがずれないこと",
+            "肘を外へ開いて肩のラインをぶらさないこと",
+        ],
+    },
+    "start_posture": {
+        "title": "離台姿勢を整えるドリル",
+        "drills": ["倒れ込みスタート", "ヒップドライブドリル", "深呼吸リリース→ゴー", "バンド前傾走"],
+        "focus": "骨盤を立てたまま腰ごと前へ出し、体をひとかたまりで押し出す形を作ります。",
+        "suggestion": "倒れ込みスタートとバンド前傾走で、腰ごと前へ移動する順序を体に入れてください。肩や顎の力みを抜いた状態で入ると、骨盤後傾や重心後退が改善しやすくなります。",
+        "pitfalls": [
+            "腰だけ先に出して頭と肩が遅れないこと",
+            "前に乗ろうとして上体だけ折れないこと",
+        ],
+    },
+}
+
+PATTERN_DIAGNOSIS = {
+    "ground_contact": "押し切れていない",
+    "push_direction": "離台が立つ",
+    "first_step_landing": "足が前に流れる",
+    "forward_com": "失速タイプ",
+    "arm_leg_coordination": "腕が遊んでいる",
+    "start_posture": "骨盤が後傾している",
+}
+
+ACTION_CUES = {
+    "ground_contact": "最後まで伸び切ってから離せ",
+    "push_direction": "低いまま飛び出す、顔は下",
+    "first_step_landing": "足は前に出すな、真下に落とせ",
+    "forward_com": "5歩目まで加速し続けろ",
+    "arm_leg_coordination": "腕で引っ張って前に出る",
+    "start_posture": "骨盤を立てて、前に向ける",
+}
+
+PRIORITY_RULES = [
+    {
+        "name": "ブレーキ接地+上方向逃げ",
+        "when": {"first_step_landing", "push_direction"},
+        "priority_order": ["first_step_landing", "push_direction"],
+        "defer": ["arm_leg_coordination"],
+    },
+    {
+        "name": "離台弱さ+早起き",
+        "when": {"ground_contact", "push_direction"},
+        "priority_order": ["ground_contact", "push_direction"],
+        "defer": ["forward_com"],
+    },
+    {
+        "name": "腰抜け+重い接地",
+        "when": {"start_posture", "ground_contact"},
+        "priority_order": ["start_posture", "ground_contact"],
+        "defer": ["arm_leg_coordination", "push_direction"],
+    },
+    {
+        "name": "回転先行",
+        "when": {"forward_com", "ground_contact"},
+        "priority_order": ["ground_contact", "first_step_landing", "forward_com"],
+        "defer": ["arm_leg_coordination"],
+    },
+    {
+        "name": "ブレーキ接地+失速",
+        "when": {"first_step_landing", "forward_com"},
+        "priority_order": ["first_step_landing", "forward_com"],
+        "defer": ["start_posture", "arm_leg_coordination"],
+    },
+    {
+        "name": "接地つぶれ+回転先行",
+        "when": {"ground_contact", "forward_com"},
+        "priority_order": ["ground_contact", "forward_com"],
+        "defer": ["arm_leg_coordination"],
+    },
+    {
+        "name": "総崩れ初心者",
+        "when": {"start_posture", "ground_contact", "first_step_landing"},
+        "priority_order": ["ground_contact", "push_direction"],
+        "defer": ["arm_leg_coordination", "forward_com"],
+    },
+    {
+        "name": "骨盤後傾+腕遅れ",
+        "when": {"start_posture", "arm_leg_coordination"},
+        "priority_order": ["start_posture", "arm_leg_coordination"],
+        "defer": ["first_step_landing"],
+    },
+    {
+        "name": "高離台+腕遅れ",
+        "when": {"push_direction", "arm_leg_coordination"},
+        "priority_order": ["push_direction", "arm_leg_coordination"],
+        "defer": ["first_step_landing"],
+    },
+    {
+        "name": "沈み込み+ブレーキ接地",
+        "when": {"ground_contact", "first_step_landing"},
+        "priority_order": ["first_step_landing", "ground_contact"],
+        "defer": ["arm_leg_coordination"],
+    },
+    {
+        "name": "ピッチ過多+歩幅消失",
+        "when": {"forward_com", "ground_contact", "first_step_landing"},
+        "priority_order": ["ground_contact", "forward_com"],
+        "defer": ["arm_leg_coordination"],
+    },
+    {
+        "name": "重心後退+失速",
+        "when": {"start_posture", "forward_com"},
+        "priority_order": ["start_posture", "forward_com"],
+        "defer": ["arm_leg_coordination"],
+    },
+    {
+        "name": "力み+早起き",
+        "when": {"start_posture", "push_direction"},
+        "priority_order": ["start_posture", "push_direction"],
+        "defer": ["first_step_landing", "forward_com"],
+    },
+    {
+        "name": "離台良好+一歩目詰まり",
+        "when": {"first_step_landing"},
+        "priority_order": ["first_step_landing", "ground_contact"],
+        "defer": ["start_posture", "push_direction"],
+    },
+    {
+        "name": "一二歩良好+三歩目失速",
+        "when": {"forward_com"},
+        "priority_order": ["forward_com", "ground_contact"],
+        "defer": ["start_posture", "first_step_landing"],
+    },
+]
+
 
 def _variant(variants: list[str], seed: float) -> str:
     idx = int(hashlib.md5(str(round(seed, 3)).encode()).hexdigest(), 16) % len(variants)
@@ -37,10 +256,12 @@ def build_feedback_payload(
     primary_diagnosis: str,
 ) -> dict[str, Any]:
     localized_diagnosis = PRIMARY_DIAGNOSIS_LABELS.get(primary_diagnosis, primary_diagnosis)
+    priority_plan = _resolve_priority_plan(scores)
     strengths = _strengths(scores)
-    priorities = _priorities(scores)
-    coaching_focus = _build_coaching_focus(scores, score_details)
+    priorities = _priorities(scores, priority_plan)
+    coaching_focus = _build_coaching_focus(scores, score_details, priority_plan)
     mechanics_overview = _build_mechanics_overview(scores)
+    practice_recommendations = _build_practice_recommendations(coaching_focus)
     next_session_focus = [item["action"] for item in coaching_focus[:2]]
 
     return {
@@ -52,8 +273,32 @@ def build_feedback_payload(
         "coaching_cues": next_session_focus,
         "mechanics_overview": mechanics_overview,
         "coaching_focus": coaching_focus,
+        "practice_recommendations": practice_recommendations,
         "next_session_focus": next_session_focus,
+        "priority_rule": priority_plan["rule_name"] if priority_plan else None,
     }
+
+
+def ensure_feedback_payload(
+    feedback: dict[str, Any] | None,
+    primary_diagnosis: str | None = None,
+) -> dict[str, Any]:
+    normalized = dict(feedback or {})
+
+    normalized.setdefault("primary_diagnosis", primary_diagnosis or "解析レビュー待ち")
+    normalized.setdefault("headline", normalized.get("summary") or "フォーム全体の所見をまとめています。")
+    normalized.setdefault("summary", "フィードバックはまだ生成されていません。")
+    normalized.setdefault("strengths", [])
+    normalized.setdefault("priorities", [])
+    normalized.setdefault("coaching_cues", [])
+    normalized.setdefault("mechanics_overview", [])
+    normalized.setdefault("coaching_focus", [])
+    normalized.setdefault("next_session_focus", [])
+
+    if not normalized.get("practice_recommendations"):
+        normalized["practice_recommendations"] = _ensure_practice_recommendations(normalized)
+
+    return normalized
 
 
 def _headline(diagnosis: str, strengths: list[str]) -> str:
@@ -71,6 +316,12 @@ def _summary(diagnosis: str, priorities: list[str]) -> str:
         return "大きな崩れはなく、スタートの基本動作は安定しています。"
     if len(priorities) == 1:
         return f"今回は特に{priorities[0]}を意識して練習すると、スタートのスピードが上がります。"
+    priority_terms = _priority_terms(priorities)
+    if priority_terms:
+        return (
+            f"今回は特に{priority_terms[0]}を優先し、次に{priority_terms[1]}を整えると、"
+            "最初の3歩の加速がまとまりやすくなります。"
+        )
     return f"今回は特に{priorities[0]}と{priorities[1]}を重点的に練習することで、最初の3歩が改善します。"
 
 
@@ -82,7 +333,9 @@ def _strengths(scores: dict[str, float]) -> list[str]:
     return messages
 
 
-def _priorities(scores: dict[str, float]) -> list[str]:
+def _priorities(scores: dict[str, float], priority_plan: dict[str, Any] | None = None) -> list[str]:
+    if priority_plan and priority_plan.get("priority_keys"):
+        return [SCORE_LABELS[key] for key in priority_plan["priority_keys"][:2] if key in SCORE_LABELS]
     return [SCORE_LABELS[key] for key, _ in sorted(scores.items(), key=lambda item: item[1])[:2]]
 
 
@@ -107,6 +360,7 @@ def _build_mechanics_overview(scores: dict[str, float]) -> list[dict[str, str]]:
 def _build_coaching_focus(
     scores: dict[str, float],
     score_details: dict[str, dict[str, Any]],
+    priority_plan: dict[str, Any] | None = None,
 ) -> list[dict[str, str]]:
     items: list[dict[str, str]] = []
     unstable_detection = any(
@@ -124,13 +378,17 @@ def _build_coaching_focus(
             }
         )
 
-    for score_key, _ in _focus_priority_items(scores):
+    for score_key, _ in _focus_priority_items(scores, priority_plan):
+        library = COACHING_PATTERN_LIBRARY.get(score_key, {})
         items.append(
             {
                 "title": SCORE_LABELS[score_key],
                 "ideal": _ideal_text(score_key),
                 "current": _current_text(score_key, score_details.get(score_key, {}), scores.get(score_key, 0.0)),
                 "action": _action_text(score_key, score_details.get(score_key, {}), scores.get(score_key, 0.0)),
+                "pattern": library.get("pattern", ""),
+                "term": library.get("term", ""),
+                "priority_reason": _priority_reason_text(score_key, priority_plan),
             }
         )
 
@@ -150,85 +408,97 @@ def _strength_message(score_key: str, score: float = 0.0) -> str:
             "踏んだ力をしっかりスピードに変えられています。接地の質は良い水準です。",
             "地面を押す力が前への動きにつながっており、接地の使い方は安定しています。",
             "接地のたびにスピードが乗っており、地面を踏む力の使い方はできています。",
+            "映像上も接地が軽くそろって見えており、地面からの反発を前へのスピードに変えられています。",
         ],
         "push_direction": [
             "スタート直後の力の向きが前向きにまとまっており、無駄なく加速できています。",
             "低く前に出る方向がしっかり出ており、力がスピードに変わっています。",
             "ドライブの方向は良好で、力が上に逃げずに前への加速につながっています。",
+            "前傾角が崩れにくく、低い角度のまま前へ押し出せています。",
+            "五歩目近くまで頭が上がりすぎず、前傾を保ったまま加速できています。この前傾の持続は大きな強みです。",
         ],
         "first_step_landing": [
             "一歩目の足の位置が体の近くに収まっており、ブレーキになっていません。",
             "一歩目で足が前に出すぎることなく、うまく体の下に落とせています。",
             "一歩目の接地がきれいで、スピードを落とさずに加速を続けられています。",
+            "一歩目の入り方が良く、離台で作った勢いを止めずに次へつなげられています。",
         ],
         "forward_com": [
-            "3歩のスピードがつながっており、流れを途切れさせずに加速できています。",
-            "1歩ずつスピードが乗っており、3歩を通じた加速のリズムができています。",
+            "3歩のスピードがつながっており、失速せずに加速を続けられています。",
+            "1歩ずつスピードが乗っており、3〜5歩目まで流れが切れていません。",
             "各ストライドでしっかり前に進んでおり、加速の連続性は良い状態です。",
+            "四歩目以降も前傾と押し切りが続いており、トップスピードへの橋渡しができています。",
         ],
         "arm_leg_coordination": [
             "腕と脚のタイミングが合っており、お互いを引っ張り合えています。",
             "腕振りと脚の切り替えが同じタイミングで動いており、連動ができています。",
             "腕脚の動きがそろっており、上半身と下半身がうまく協力できています。",
+            "肘の引きと脚の接地が合っており、体軸がぶれずに推進方向が安定しています。",
         ],
     }
     default_variants = [
         "セットポジションの姿勢は適正で、スタートの準備ができています。",
         "スタート前の姿勢に大きな崩れはなく、素直に出やすい形ができています。",
         "セットポジションは問題なく、ドライブに入りやすい状態です。",
+        "離台前の静止が安定しており、スタートへ入りやすい土台があります。",
+        "セットポジションの静止が安定しており、毎回同じ形から離台できる再現性があります。",
+        "合図からの初動が鋭く、しかも前方への方向性がそろっています。この出だしは大きな武器です。",
     ]
     return _variant(variants.get(score_key, default_variants), score)
 
 
 def _axis_status(score_key: str, score: float) -> str:
     if score >= 8.5:
-        return "優秀"
+        return "最高"
     if score >= 7.0:
-        return "良好"
+        return "良い"
     if score >= 5.8:
-        return "要改善"
-    return "重点改善"
+        return "普通"
+    return "改善余地あり"
 
 
 def _axis_summary(score_key: str, score: float) -> str:
     if score_key == "ground_contact":
         if score >= 8.5:
-            return "踏んだ力がそのままスピードになっています。接地の質はとても高い水準です。"
+            return "踏んだ力をしっかりスピードに変えられています。この感覚はそのまま維持していきましょう。"
         if score >= 7.0:
-            return "接地反力をスピードに変換できており、推進への連結は安定しています。"
+            return "地面を押した力は使えています。さらに後ろへ押し切れると、もっと前に進みやすくなります。"
         if score >= 5.8:
-            return "踏んだ力の一部がスピードに変わりきっていません。改善すると加速がはっきり上がります。"
-        return "踏んでもスピードに変わっていない状態で、1歩ごとにロスが出ています。"
+            return "踏んだ力がまだスピードに変わりきっていません。最後まで押し切る意識を強めたいです。"
+        return "踏んだ力がスピードに変わりきっていない状態で、1歩ごとにロスが出ています。"
     if score_key == "push_direction":
         if score >= 8.5:
-            return "力の向きが前にそろっており、ほぼ全部がスピードに変わっています。"
+            return "スタート直後に低く前へ出られています。この出方はかなり良いです。"
         if score >= 7.0:
-            return "ドライブ方向は前向きにまとまっており、スピードへの変換効率は良好です。"
+            return "前には出られています。もう少し低く長く押し出せると、さらに加速しやすくなります。"
         if score >= 5.8:
-            return "力が上に逃げており、前へのスピードに変わる量が減っています。"
+            return "力が少し上に逃げています。低く前へ押し出す意識を強めたいです。"
         return "力が上に大きく逃げており、スピードが出にくい状態の主な原因になっています。"
     if score_key == "first_step_landing":
         if score >= 8.5:
-            return "一歩目でブレーキがほぼかかっておらず、スピードをロスなく加速に乗せられています。"
+            return "最初の一歩がきれいに入っており、ブレーキになっていません。この一歩はかなり良いです。"
         if score >= 7.0:
-            return "一歩目接地のブレーキング成分は少なく、スピードの継続性は良好です。"
+            return "最初の一歩は大きく崩れていません。もう少し体の下に落とせると、さらに前に乗れます。"
         if score >= 5.8:
-            return "一歩目で少しブレーキがかかっており、そこでスピードが落ちています。"
+            return "最初の一歩で少しブレーキがかかっています。足を前に置きにいかないようにしたいです。"
         return "一歩目のブレーキが大きく、せっかくのスタートのスピードが落ちてしまっています。"
     if score_key == "forward_com":
         if score >= 8.5:
-            return "3歩を通じてスピードがきれいに積み上がっており、加速の流れが非常に良い状態です。"
+            return "3歩の流れがきれいにつながっています。この加速のリズムは自信を持って良いです。"
         if score >= 7.0:
-            return "初期加速のリズムは整っており、スピードを連続して積み上げられています。"
+            return "加速の流れはあります。2歩目以降も前に乗り続けられると、もっと伸びます。"
         if score >= 5.8:
-            return "ストライドの間でスピードの流れが途切れやすく、加速の効率に改善余地があります。"
+            return "一歩ごとのつながりが少し途切れています。3歩目以降も押し続ける意識を持ちたいです。"
         return "3歩でスピードがうまく積み上がらず、足だけが速く回る状態になっています。"
     if score >= 7.0:
-        return "セットポジションは問題なく、スタートの準備ができています。"
+        return "スタートの構えは大きく崩れていません。さらに前へ出やすい形に整えられる余地があります。"
     return "セットポジションに改善余地があり、スタートのスピードに影響しています。"
 
 
 def _ideal_text(score_key: str) -> str:
+    library_ideal = COACHING_PATTERN_LIBRARY.get(score_key, {}).get("ideal")
+    if library_ideal:
+        return library_ideal
     ideals: dict[str, str] = {
         "ground_contact": (
             "理想は、接地のたびに地面をしっかり後ろへ押して、腰がまっすぐ前に進むことです。"
@@ -267,163 +537,173 @@ def _current_text(score_key: str, detail: dict[str, Any], score: float) -> str:
     if score_key == "ground_contact":
         if score >= 7.5:
             return _variant([
-                "接地で地面を押す動きはできていますが、最後まで押し切る前に次の動作に移ってしまっています。もう少し粘れると、さらにスピードが出ます。",
-                "踏む力はあります。ただ、もう半歩分だけ地面を押し続けられると、スピードへの変換がさらに高まります。",
+                "地面は押せていますが、まだ少し押し切れていません。離地の瞬間まで伸び切れると、さらに前に進めます。",
+                "踏む力はあります。ただ、押し切れていないぶん、最後のひと伸びがスピードに変わりきっていません。",
             ], score)
         if score >= 6.5:
             return _variant([
-                "接地はできていますが、地面に当てるだけで終わっている感じがあります。足が離れるまで後ろへ押す意識がもう少し必要です。",
-                "踏み込みはできていますが、押し切る前に足が上がってしまっています。最後まで地面を蹴り続けることが課題です。",
+                "接地はできていますが、押し切れていません。トリプルエクステンションが途中で終わり、力が逃げています。",
+                "踏み込みはできていますが、膝が抜けたまま離れており、押し切る前に動きが終わっています。",
             ], score)
         return _variant([
-            "踏んでいますが、力がスピードに変わりきっていません。「当たっているだけ」の接地になっており、前に進む力が十分に出ていません。",
-            "足が地面に触れているだけで、後ろへ押す動作が弱い状態です。踏んだ力がそのまま逃げてしまっています。",
-            "接地のたびに力のロスが起きています。地面に当てるだけでなく、しっかり後ろへ押し切ることが必要です。",
+            "一歩ごとの押し切りが不完全で、踏んだ力がスピードに変わりきっていません。お尻が残り、後ろへ押し切る前に離れています。",
+            "接地で地面を殺しており、反発が前への推進に変わっていません。接地がつぶれ、ここがスピードロスの主な原因です。",
+            "股関節・膝・足首の伸びが途中で止まり、三関節を使い切れていません。押し切る前に動きが終わり、接地のたびに腰が落ちています。",
         ], score)
 
     if score_key == "push_direction":
         if score >= 7.5:
             return _variant([
-                "方向はほぼ前向きです。もう少し体を低く保てると、さらにスピードが乗ります。",
-                "前への力は出ていますが、少しだけ上に力が逃げています。体の起き上がりをもう少し我慢できると改善します。",
+                "前には出られています。ただ、少しだけ起き上がりが早く、3歩目までの前傾を使い切れていません。",
+                "出だしの方向は良いですが、早起き気味なので、もう少し低いまま押し続けられるとさらに伸びます。",
+                "スタート直後の方向性は良いですが、三歩目で少し頭が上がりやすく、そこから前への流れが薄くなっています。",
             ], score)
         if score >= 6.5:
             return _variant([
-                "スタート直後に体が少し早く起き上がっています。その分、力が上に逃げてスピードに変わりにくくなっています。",
-                "出だしは良いですが、2〜3歩目で体が起き上がるのが早く、そこから力が前ではなく上に向かっています。",
+                "スタート直後から体幹が起き上がっており、加速に必要な前傾角が維持できていません。そこから力が上に逃げています。",
+                "離台が立ち気味で、頭と胸が先に上がるぶん、水平方向への加速力が薄くなっています。",
             ], score)
         return _variant([
-            "力が前ではなく上に向かっています。体の起き上がりが早いため、スピードに変わる前に力が逃げてしまっています。",
-            "スタート直後から体が立ってしまっており、地面を蹴っても上に浮くような動きになっています。",
-            "ドライブで力が上に逃げており、前に進む力が出にくい状態です。体を低く保つことが最優先です。",
+            "スタート直後から体幹が起き上がっており、加速に必要な前傾角が維持できていません。前に使いたい力が上に抜けています。",
+            "離台が立っていて、低く押し出す形が作れていません。ここが一番大きな課題です。",
+            "前傾で押せる時間が短く、前ではなく上に浮く動きになっています。3歩目までの加速が止まりやすいです。",
         ], score)
 
     if score_key == "first_step_landing":
         if score >= 7.5:
             return _variant([
-                "一歩目の足の位置はほぼ良いです。もう少し体の真下に近づけると、さらにブレーキが減ります。",
-                "一歩目はうまく体の下に落とせています。足がほんの少し前に出ている場面があるので、そこだけ意識すると完璧です。",
+                "最初の一歩は大きく崩れていません。ただ、少しだけ足が前に流れる場面があり、そこでわずかにブレーキが入っています。",
+                "一歩目はほぼ良いですが、接地前に足を少し置きにいく場面があります。真下に鋭く落とせるとさらに良くなります。",
+                "離台の勢いはありますが、一歩目だけ少し詰まりやすく、その瞬間に初速を受け止めきれていません。",
             ], score)
         if score >= 6.5:
             return _variant([
-                "一歩目で足が少し前に出すぎています。そこでわずかにブレーキがかかり、スピードが落ちています。",
-                "一歩目の足の位置がやや前寄りです。体の下に引きつける動作をもう少し速くできるとブレーキが減ります。",
+                "一歩目で足が前に流れています。接地位置が重心より前にあるぶん、そこで少しブレーキがかかっています。",
+                "最初の一歩を置きにいっており、体の下ではなく前で受けています。そのぶんスピードが落ちています。",
             ], score)
         return _variant([
-            "一歩目で足が前に出すぎており、そこでブレーキになっています。足を前に置きに行く動作が出ているため、スピードが落ちています。",
-            "一歩目の接地が体より前になっており、踏んだ瞬間にブレーキがかかっています。足を体の下に落とす意識が必要です。",
-            "一歩目で足が流れており、ブレーキになっています。せっかくスタートで出した力がそこでロスになっています。",
+            "一歩目で足が前に流れており、ブレーキ接地になっています。せっかくのスタートの力を最初の一歩で止めています。",
+            "最初の一歩を前に置きにいく動きが強く、接地点が重心より前にあります。ここでスピードを大きくロスしています。",
+            "一歩目が短く詰まりやすく、足が前に流れています。ここを真下に落とせないと加速は乗りません。",
+            "離台の角度は悪くありませんが、一歩目だけ異様に小さく詰まり、そこで勢いが吸収されています。まずは一歩目を大きく使い切る必要があります。",
         ], score)
 
     if score_key == "forward_com":
         if score >= 7.5:
             return _variant([
-                "3歩の流れはつながっています。ただ、足だけが先に回る場面があり、体全体の前への流れをもう少し出せます。",
-                "加速の流れはできていますが、3歩目あたりで足の回転が先走り、体が前に乗りきれていない瞬間があります。",
+                "加速のつながりはあります。ただ、途中で少し回転先行になり、体より足が先に速くなる瞬間があります。",
+                "流れはできていますが、3歩目あたりで足の回転が先走り、前への運びが少し切れています。",
+                "一・二歩目は良いですが、三歩目だけ歩幅が少し詰まりやすく、そこで前への流れが細くなります。",
             ], score)
         if score >= 6.5:
             return _variant([
-                "3歩の流れはありますが、途中で途切れる場面があります。足だけを速く動かそうとして、体が前についてきていない状態です。",
-                "スピードが乗りかけているところで、足の回転だけが先に速くなり、体の前進が追いついていません。",
+                "3歩目以降で失速タイプの動きが出ています。足の回転が先に出て、体の前進が途中で切れています。",
+                "3歩の流れはありますが、途中から足だけが先に回っており、押して進むリズムが崩れています。",
+                "三歩目までは加速していますが、四歩目以降で歩幅が落ち、ピッチでごまかす形になっています。ここで推進力が空回りしています。",
             ], score)
         return _variant([
-            "3歩のスピードが途切れています。足だけが速く回ってしまい、体が前に進みきれていない状態です。",
-            "足の回転は速くなっていますが、体全体が前に乗っていません。スピードが出ているように見えて、実際にはロスが続いています。",
-            "加速の流れが1歩ごとに途切れており、スピードが積み上がっていきません。足だけが先走るパターンが出ています。",
+            "スタート直後の動きは出ていますが、3歩目以降で加速が失速しています。足だけが先に回っており、押して進む力が途中で切れています。",
+            "3歩のスピードが途切れていて、体より足の回転が先に速くなっています。歩幅が消え、3〜5歩目の押し切りが続いていません。",
+            "加速の流れが1歩ごとに切れており、足だけが先走る形になっています。5歩目まで加速を続ける感覚を作り直す必要があります。",
         ], score)
 
     if score_key == "arm_leg_coordination":
         return _variant([
-            "腕と脚のタイミングがずれています。脚が着いているときに腕の引きが間に合っておらず、お互いを引っ張り合えていません。",
-            "腕振りと脚の切り替えがバラバラになっています。腕が引けないぶん、脚も前に出にくくなっています。",
-            "腕の振りが弱いか、脚の動きとタイミングが合っていません。腕と脚をそろえることで前への力が増します。",
+            "腕振りが脚の動きに対して遅れており、体の軸がブレながら加速しています。腕が遊んでいて、推進力への貢献が足りません。",
+            "腕振りが後ろへまっすぐ引けず、腕と脚の合わせがばらついています。そのぶん前への出力が弱くなっています。",
+            "腕が流れることで肩のラインがぶれ、脚の切り替えとも合っていません。腕遅れが連動のロスになっています。",
         ], score)
 
     return _variant([
-        "セットポジションで体が少し高すぎます。もう少し低く構えると、最初から前に力強く出やすくなります。",
-        "スタートの姿勢が高めで、出た瞬間に力が上に逃げやすい形になっています。",
+        "骨盤が後傾しており、腰が後ろに残っています。体が割れて、スタートで前へ力を出しにくい形です。",
+        "セット重心が後ろに残りやすく、腰抜け気味で上半身だけ前傾し下半身が残っています。股関節を使い切れず、ブロッククリアランスの形が崩れています。",
+        "離台の瞬間に腰だけが先に動き、頭と肩が一拍遅れてついてきています。体がひとかたまりで出られておらず、最初の一歩へ力がつながりにくい状態です。",
     ], score)
 
 
 def _action_text(score_key: str, detail: dict[str, Any], score: float) -> str:
+    preferred_cue = COACHING_PATTERN_LIBRARY.get(score_key, {}).get("cue")
     if score_key == "ground_contact":
         if score >= 7.5:
             return _variant([
-                "接地の強さを保ちながら、足が地面を離れるまで後ろへ押し続けてください。「当てたら終わり」ではなく、「押し切ってから次へ」の感覚で。",
-                "今の接地を維持しつつ、最後まで地面を蹴り続けることを意識してください。もう少し粘るだけでスピードが変わります。",
+                f"次は「{preferred_cue or ACTION_CUES[score_key]}」を意識してください。今の接地に、最後のひと伸びを足すイメージです。",
+                f"地面を押す感覚はあります。ここに「{preferred_cue or ACTION_CUES[score_key]}」を足せると、さらに前へ進めます。",
             ], score)
         if score >= 6.5:
             return _variant([
-                "足が地面についたら、後ろへ押しながら腰を前に運ぶ感覚を大切に。「踏む」より「押す」イメージで接地してください。",
-                "接地したあと、足の裏で地面を後ろに押し続けながら、体重を前に乗せていく意識を持ってください。",
+                f"まず意識することは「{preferred_cue or ACTION_CUES[score_key]}」です。股関節・膝・足首が全部伸び切るまで、地面を後ろへ送り続けてください。",
+                f"まずは「{preferred_cue or ACTION_CUES[score_key]}」を徹底してください。中途半端に離さないだけで加速は変わります。",
             ], score)
         return _variant([
-            "接地のたびに「地面を後ろへ押して、腰を前へ運ぶ」を意識してください。当てるだけで終わらず、最後まで押し切ることが大切です。",
-            "踏んだ瞬間から後ろへ押す意識を持ち、体が前に乗るまで押し続けてください。「押し切ってから次の足」のリズムで走ってみてください。",
-            "1歩ずつ地面をしっかり後ろへ押し切ることを最優先にしてください。スピードは押した分だけ返ってきます。",
+            f"いちばん意識してほしいのは「{preferred_cue or ACTION_CUES[score_key]}」です。離地の瞬間まで一直線に伸び切ってから次の動作へ移ってください。",
+            f"今は押し切れていないので、「{preferred_cue or ACTION_CUES[score_key]}」を毎歩徹底してください。沈まずに弾き返せると押した分だけ前に進みます。",
+            f"まずは「{preferred_cue or ACTION_CUES[score_key]}」だけに集中してください。中途半端に離さず、地面を殺さない接地を作ることが近道です。",
         ], score)
 
     if score_key == "push_direction":
         if score >= 7.5:
             return _variant([
-                "今の前傾姿勢を保ちながら、体を起こすのをもう少し我慢してください。3歩目まで頭を低く保つ意識で走ってみてください。",
-                "体を起こしたくなる気持ちを我慢して、低いまま3歩進んでみてください。それだけでスピードが変わります。",
+                f"次は「{preferred_cue or ACTION_CUES[score_key]}」を意識してください。今の良い出方を、もう半歩ぶん長く使いたいです。",
+                f"出だしは良いので、「{preferred_cue or ACTION_CUES[score_key]}」を足せるとさらに伸びます。",
             ], score)
         if score >= 6.5:
             return _variant([
-                "スタートから3歩は背中を水平に保ち、頭が低いまま前に出てください。早く体を起こさないことが大切です。",
-                "出だしで胸を起こさず、体全体を低いまま斜め前に進んでください。頭の位置が低いほど前への力が出ます。",
+                f"まず意識することは「{preferred_cue or ACTION_CUES[score_key]}」です。早起きしないことを最優先に、3歩目まで前傾を残してください。",
+                f"まずは「{preferred_cue or ACTION_CUES[score_key]}」を徹底してください。頭と胸が上がるのを我慢するだけで方向は変わります。",
             ], score)
         return _variant([
-            "スタートから3歩は体を低く保ってください。頭が先に起き上がると力が上に逃げます。視線は前の地面に向けたまま、低く前に出る意識で。",
-            "体を早く起こさないことが最優先です。頭から腰までを低く保ったまま、斜め前に全身を投げ出すイメージで出てください。",
-            "低い姿勢を3歩間キープする練習をしてください。「まだ起きない、まだ起きない」と思いながら前に出るくらいがちょうど良いです。",
+            f"いちばん意識してほしいのは「{preferred_cue or ACTION_CUES[score_key]}」です。離台が立ったままだと、後の動きが全部崩れやすくなります。",
+            f"今は起き上がりが早いので、「{preferred_cue or ACTION_CUES[score_key]}」を徹底してください。3歩目まではまだ低くて大丈夫です。",
+            f"まずは「{preferred_cue or ACTION_CUES[score_key]}」だけに集中してください。立つ前に押す感覚を作り、前方への推進軸を整えたいです。",
         ], score)
 
     if score_key == "first_step_landing":
         if score >= 7.5:
             return _variant([
-                "今の接地位置を保ちながら、足を体の下に引きつける動作をさらに速くしてください。太ももの裏で引き寄せる感覚です。",
-                "一歩目の接地を維持しつつ、足を落とすタイミングをもう少し早めてみてください。体の下に先に落とすイメージです。",
+                f"一歩目は大きく崩れていません。次は「{preferred_cue or ACTION_CUES[score_key]}」を意識して、足の前流れをなくしてください。",
+                f"今の一歩に「{preferred_cue or ACTION_CUES[score_key]}」を足せると、さらにブレーキが減ります。",
+                f"離台の勢いは作れているので、「{preferred_cue or ACTION_CUES[score_key]}」で一歩目の詰まりだけ外せれば、一気につながりやすくなります。",
             ], score)
         if score >= 6.5:
             return _variant([
-                "一歩目は足を前に「出す」のではなく、体の下に「落とす」感覚で。太ももの裏を使って足を引きつけながら接地してください。",
-                "一歩目で足が前に流れないよう、太ももの裏側で引き戻しながら接地してください。体の下に落ちてくるイメージです。",
+                f"まず意識することは「{preferred_cue or ACTION_CUES[score_key]}」です。前に置きにいかず、体の下へ鋭く落としてください。",
+                f"まずは「{preferred_cue or ACTION_CUES[score_key]}」を徹底してください。足が前に流れるだけで一歩目がブレーキになります。",
             ], score)
         return _variant([
-            "一歩目は足を前に置きに行かないでください。体の下に落とすイメージで、太ももの裏を使って足を引きつけながら接地してください。前に出すのではなく「下ろす」感覚です。",
-            "一歩目で足が前に出すぎています。足を前に「置く」のをやめて、体の真下に「引き落とす」動きに変えてください。ハムストリング（太もも裏）で引きつける意識です。",
-            "一歩目スイッチで足を前ではなく下に向けて引き戻してください。体の下に先に足が来るようになると、ブレーキがなくなってスピードが続きます。",
+            f"いちばん意識してほしいのは「{preferred_cue or ACTION_CUES[score_key]}」です。前に置きにいく動きを止めて、一歩目のブレーキを消してください。",
+            f"今は足が前に流れているので、「{preferred_cue or ACTION_CUES[score_key]}」を徹底してください。真下に落ちればダブルブレーキは大きく減ります。",
+            f"まずは「{preferred_cue or ACTION_CUES[score_key]}」だけに集中してください。一歩目の接地位置を直すことが最優先です。",
         ], score)
 
     if score_key == "forward_com":
         if score >= 7.5:
             return _variant([
-                "足の回転を急がず、1歩ごとに体が前に乗ってから次の足へ移ってください。「押してから進む」を3歩続ける意識で。",
-                "ピッチを上げることより、体が前に乗り続けることを優先してください。流れが途切れないことがスピードにつながります。",
+                f"加速の流れはあります。次は「{preferred_cue or ACTION_CUES[score_key]}」を意識して、回転先行をなくしていきましょう。",
+                f"今の流れを保ちつつ、「{preferred_cue or ACTION_CUES[score_key]}」を徹底できると3歩の伸びが変わります。",
+                f"三歩目の質はあと少しで変わるので、「{preferred_cue or ACTION_CUES[score_key]}」を意識し、5歩目まで流れを切らさないようにしてください。",
             ], score)
         if score >= 6.5:
             return _variant([
-                "2〜3歩目で足だけを速く動かそうとしないでください。1歩ずつ地面を押して体が前に進んでから、次の足へ移るリズムを作ってください。",
-                "ピッチより流れを大切に。1歩ごとに体重が前に移ってから次の足が出るリズムを意識すると、スピードが乗り続けます。",
+                f"まず意識することは「{preferred_cue or ACTION_CUES[score_key]}」です。回転を急がず、押した力が前に変わってから次へ移ってください。",
+                f"回転先行を止めるために、「{preferred_cue or ACTION_CUES[score_key]}」を意識してください。足の速さより前への運びを優先したいです。",
             ], score)
         return _variant([
-            "1歩目から3歩目まで、足の回転を急がず「押してから次へ」のリズムを守ってください。スピードは足を速く動かすことではなく、体が前に乗り続けることから生まれます。",
-            "足だけが速く回るのをやめて、1歩ごとに体を前に乗せてから次の足へ移ってください。「乗ってから次へ」を3歩繰り返すだけでスピードが変わります。",
-            "ピッチを急がず、1歩ずつしっかり押してから次へ進んでください。3歩の流れをつなげることが、スタートのスピードを上げる一番の近道です。",
+            f"いちばん意識してほしいのは「{preferred_cue or ACTION_CUES[score_key]}」です。3歩目で終わらず、5歩目まで加速を続けてください。",
+            f"今は足だけが先に回っているので、「{preferred_cue or ACTION_CUES[score_key]}」を徹底してください。体が前に乗ってから次へ進む形を作りたいです。",
+            f"まずは「{preferred_cue or ACTION_CUES[score_key]}」だけに集中してください。回す前に押すこと、そして5歩目まで失速しないことが最優先です。",
         ], score)
 
     if score_key == "arm_leg_coordination":
         return _variant([
-            "脚が地面に着く瞬間に、反対の腕を後ろに強く引いてください。腕が引けると、脚も自然に前に出やすくなります。腕と脚を同じタイミングで切り替える意識を持ってください。",
-            "腕振りをもっと大きくして、脚の切り替えと同じタイミングで後ろに引いてください。腕と脚がそろうと、前への力が増します。",
-            "次は、押し出しと同時に反対腕を強く後ろに引いて、腕と脚の切り替えタイミングを合わせてください。腕が引けると体全体が前に出やすくなります。",
+            f"まず意識することは「{preferred_cue or ACTION_CUES[score_key]}」です。肘を鋭く後方へ引き、脚の接地と同じタイミングで切り替えてください。",
+            f"まずは「{preferred_cue or ACTION_CUES[score_key]}」を意識してください。腕が遊ばなくなるだけで、体軸はかなり安定します。",
+            f"腕遅れを止めるために、「{preferred_cue or ACTION_CUES[score_key]}」を徹底してください。肩のラインをぶらさず走りたいです。",
         ], score)
 
     return _variant([
-        "セットポジションでもう少し低く構えてください。腰を下げて体を前傾させた姿勢から出ると、最初から前への力が出やすくなります。",
-        "スタートの姿勢を低くして、合図と同時に真っ直ぐ前に飛び出せる形を作ってください。低く構えるほど、最初の一歩が力強くなります。",
+        f"まず意識することは「{preferred_cue or ACTION_CUES['start_posture']}」です。骨盤が後傾したままだと、股関節を使い切れません。",
+        f"まずは「{preferred_cue or ACTION_CUES['start_posture']}」を意識してください。頭・肩・腰・足先が一直線で出る形を作り、重心を後ろに残さないようにしたいです。",
+        f"いちばん大事なのは「{preferred_cue or ACTION_CUES['start_posture']}」です。セットの重心を少し前に置いて、離台を体ごと一直線で出すことから整えてください。",
     ], score)
 
 
@@ -437,7 +717,7 @@ def _deduction_to_current_text(score_key: str, reason: str, score: float = 0.0) 
     if score_key == "ground_contact":
         return _variant([
             "踏んだ力がスピードに変わりきっていません。地面を押し切る前に足が離れてしまっています。",
-            "接地で地面に当たっているだけで、後ろへ押し切る動作が弱い状態です。",
+            "接地で地面に当たっているだけで、後ろへ押し切る動作が弱い状態です。接地の沈み込みも大きく出ています。",
         ], score)
     if score_key == "push_direction":
         return _variant([
@@ -452,7 +732,7 @@ def _deduction_to_current_text(score_key: str, reason: str, score: float = 0.0) 
     if score_key == "forward_com":
         return _variant([
             "3歩の流れが途切れており、足だけが速く回ってスピードが乗りにくい状態です。",
-            "ストライドのたびにスピードが止まりかけており、足の回転だけが先走っています。",
+            "ストライドのたびにスピードが止まりかけており、足の回転だけが先走っています。押し切りが薄いため歩幅も消えています。",
         ], score)
     if score_key == "arm_leg_coordination":
         return _variant([
@@ -461,7 +741,7 @@ def _deduction_to_current_text(score_key: str, reason: str, score: float = 0.0) 
         ], score)
     return _variant([
         "セットポジションの姿勢が高すぎて、最初から力が上に逃げやすい状態です。",
-        "スタートの姿勢に問題があり、最初の一歩の力が十分に出にくくなっています。",
+        "セットポジションで体重が後方に残りやすく、最初の一歩の力が十分に出にくくなっています。",
     ], score)
 
 
@@ -490,7 +770,10 @@ def _measurement(measurements: dict[str, Any], key: str) -> float | None:
     return None
 
 
-def _focus_priority_items(scores: dict[str, float]) -> list[tuple[str, float]]:
+def _focus_priority_items(
+    scores: dict[str, float],
+    priority_plan: dict[str, Any] | None = None,
+) -> list[tuple[str, float]]:
     preferred_axes = [
         "ground_contact",
         "push_direction",
@@ -503,6 +786,19 @@ def _focus_priority_items(scores: dict[str, float]) -> list[tuple[str, float]]:
         scores.items(),
         key=lambda item: (item[1], preferred_axes.index(item[0]) if item[0] in preferred_axes else 99),
     )
+    if priority_plan and priority_plan.get("priority_keys"):
+        prioritized = []
+        used = set()
+        deferred = set(priority_plan.get("defer_keys", []))
+        for key in priority_plan["priority_keys"]:
+            if key in scores and key not in used:
+                prioritized.append((key, scores[key]))
+                used.add(key)
+        for key, value in ordered:
+            if key in used or key in deferred:
+                continue
+            prioritized.append((key, value))
+        ordered = prioritized
     selected: list[tuple[str, float]] = []
     for key, value in ordered:
         if key == "start_posture" and value >= 5.5:
@@ -511,3 +807,267 @@ def _focus_priority_items(scores: dict[str, float]) -> list[tuple[str, float]]:
         if len(selected) == 3:
             break
     return selected
+
+
+def _priority_terms(priorities: list[str]) -> list[str]:
+    reverse_labels = {label: key for key, label in SCORE_LABELS.items()}
+    terms: list[str] = []
+    for priority in priorities[:2]:
+        score_key = reverse_labels.get(priority)
+        if not score_key:
+            continue
+        term = COACHING_PATTERN_LIBRARY.get(score_key, {}).get("term")
+        if term:
+            terms.append(term)
+    return terms
+
+
+def _resolve_priority_plan(scores: dict[str, float]) -> dict[str, Any] | None:
+    active_low_axes = {key for key, value in scores.items() if value < 6.9}
+    if (
+        scores.get("ground_contact", 10.0) < 6.4
+        and scores.get("first_step_landing", 10.0) < 6.4
+    ):
+        return {
+            "rule_name": "沈み込み+ブレーキ接地",
+            "priority_keys": ["first_step_landing", "ground_contact"],
+            "defer_keys": ["arm_leg_coordination"],
+        }
+
+    if (
+        scores.get("ground_contact", 10.0) < 6.2
+        and scores.get("forward_com", 10.0) < 6.5
+        and scores.get("push_direction", 0.0) >= 6.5
+    ):
+        return {
+            "rule_name": "接地つぶれ+回転先行",
+            "priority_keys": ["ground_contact", "forward_com"],
+            "defer_keys": ["arm_leg_coordination"],
+        }
+
+    if (
+        scores.get("forward_com", 10.0) < 6.2
+        and scores.get("ground_contact", 10.0) < 6.5
+        and scores.get("first_step_landing", 10.0) >= 6.8
+    ):
+        return {
+            "rule_name": "ピッチ過多+歩幅消失",
+            "priority_keys": ["ground_contact", "forward_com"],
+            "defer_keys": ["arm_leg_coordination"],
+        }
+
+    if (
+        scores.get("first_step_landing", 10.0) < 6.5
+        and scores.get("forward_com", 10.0) < 6.5
+        and scores.get("push_direction", 0.0) >= 6.8
+    ):
+        return {
+            "rule_name": "ブレーキ接地+失速",
+            "priority_keys": ["first_step_landing", "forward_com"],
+            "defer_keys": ["start_posture", "arm_leg_coordination"],
+        }
+
+    if (
+        scores.get("start_posture", 10.0) < 6.4
+        and scores.get("forward_com", 10.0) < 6.6
+        and scores.get("first_step_landing", 10.0) < 6.8
+    ):
+        return {
+            "rule_name": "重心後退+失速",
+            "priority_keys": ["start_posture", "forward_com"],
+            "defer_keys": ["arm_leg_coordination"],
+        }
+
+    if (
+        scores.get("start_posture", 0.0) >= 7.0
+        and scores.get("push_direction", 0.0) >= 7.0
+        and scores.get("first_step_landing", 10.0) < 6.4
+    ):
+        return {
+            "rule_name": "離台良好+一歩目詰まり",
+            "priority_keys": ["first_step_landing", "ground_contact"],
+            "defer_keys": ["start_posture", "push_direction"],
+        }
+
+    if (
+        scores.get("first_step_landing", 0.0) >= 7.0
+        and scores.get("push_direction", 0.0) >= 7.0
+        and scores.get("forward_com", 10.0) < 6.2
+    ):
+        return {
+            "rule_name": "一二歩良好+三歩目失速",
+            "priority_keys": ["forward_com", "ground_contact"],
+            "defer_keys": ["start_posture", "first_step_landing"],
+        }
+
+    if (
+        scores.get("forward_com", 10.0) < 6.9
+        and scores.get("first_step_landing", 0.0) >= 7.0
+        and scores.get("push_direction", 0.0) >= 7.0
+    ):
+        return {
+            "rule_name": "3歩目以降の失速",
+            "priority_keys": ["forward_com", "ground_contact"],
+            "defer_keys": ["start_posture", "first_step_landing"],
+        }
+
+    if (
+        scores.get("start_posture", 10.0) < 6.9
+        and scores.get("arm_leg_coordination", 10.0) < 6.9
+        and scores.get("push_direction", 10.0) < 6.9
+    ):
+        return {
+            "rule_name": "過緊張",
+            "priority_keys": ["start_posture", "arm_leg_coordination"],
+            "defer_keys": ["ground_contact", "first_step_landing", "forward_com"],
+        }
+
+    if len(active_low_axes) >= 4:
+        return {
+            "rule_name": "総崩れ初心者",
+            "priority_keys": ["ground_contact", "push_direction"],
+            "defer_keys": ["arm_leg_coordination", "forward_com"],
+        }
+
+    best_rule: dict[str, Any] | None = None
+    best_match_size = -1
+    for rule in PRIORITY_RULES:
+        required = rule["when"]
+        if required.issubset(active_low_axes):
+            if len(required) > best_match_size:
+                best_rule = rule
+                best_match_size = len(required)
+
+    if best_rule:
+        return {
+            "rule_name": best_rule["name"],
+            "priority_keys": best_rule["priority_order"],
+            "defer_keys": best_rule.get("defer", []),
+        }
+
+    return None
+
+
+def _priority_reason_text(score_key: str, priority_plan: dict[str, Any] | None) -> str:
+    if not priority_plan:
+        return ""
+    priority_keys = priority_plan.get("priority_keys", [])
+    if not priority_keys or score_key != priority_keys[0]:
+        return ""
+    reasons = {
+        "ブレーキ接地+上方向逃げ": "まず一歩目のブレーキを外さないと、その後の出方を直しても前に進みにくいです。",
+        "離台弱さ+早起き": "まず押し切る力を作らないと、前傾だけ整えても初速が変わりにくいです。",
+        "腰抜け+重い接地": "まず腰の位置を整えないと、接地だけ軽くしようとしても土台が崩れたままです。",
+        "回転先行": "まず押し切りを作らないと、回転だけを抑えても前へのスピードは伸びません。",
+        "ブレーキ接地+失速": "毎歩のブレーキを消さない限り、その後の加速を直しても流れはつながりません。まず接地位置の修正が先です。",
+        "接地つぶれ+回転先行": "接地がつぶれている状態で回転を上げても沈み込みが強まるだけなので、まず接地を短く鋭くする必要があります。",
+        "沈み込み+ブレーキ接地": "腰の沈み込みと足の前流れが同時に出ると、毎歩で二重のブレーキになります。まず一歩目の接地位置と腰の高さをそろえる必要があります。",
+        "ピッチ過多+歩幅消失": "回転を上げても一歩の押し切りが消えていると前に進まないので、まず歩幅と押し切りを取り戻すことが先です。",
+        "重心後退+失速": "腰が前に出ず重心が後ろへ戻ると、その後の加速が積み上がりません。まず重心を前方に保つことを優先した方が変わりやすいです。",
+        "総崩れ初心者": "まずは情報を絞り、最初の一歩と押し出しだけに集中した方が動きが変わりやすいです。",
+        "骨盤後傾+腕遅れ": "骨盤が後傾したまま腕だけ直しても推進力は変わりにくいので、まずは土台から整える必要があります。",
+        "高離台+腕遅れ": "離台の角度が立ったままでは後の動きが連鎖的に崩れるので、まず出だしの形を整える方が効果的です。",
+        "3歩目以降の失速": "離台と一歩目は機能しているので、今いちばん効くのは3歩目以降の押し切りを切らさないことです。",
+        "過緊張": "全身が力んでいる状態では細かい技術を入れても動きにくいので、まず脱力だけに絞った方が変わりやすいです。",
+        "力み+早起き": "緊張で体が固まったままでは前傾も保ちにくいので、まず脱力を作ってから低く出る形を整える方が変化が出やすいです。",
+        "離台良好+一歩目詰まり": "離台の形はできているので、今いちばん効くのは一歩目の接地位置だけを直すことです。良い出だしをそのまま一歩目につなげることが最短です。",
+        "一二歩良好+三歩目失速": "一・二歩目の質は保てているので、三歩目以降の押し切りだけに絞って直す方が、良い流れを崩さずに改善できます。",
+    }
+    return reasons.get(priority_plan.get("rule_name", ""), "")
+
+
+def _build_practice_recommendations(coaching_focus: list[dict[str, str]]) -> list[dict[str, Any]]:
+    recommendations: list[dict[str, Any]] = []
+    seen_titles: set[str] = set()
+    for item in coaching_focus:
+        score_key = _score_key_from_title(item.get("title", ""))
+        if not score_key:
+            continue
+        drill = DRILL_LIBRARY.get(score_key)
+        if not drill or drill["title"] in seen_titles:
+            continue
+        recommendations.append(
+            {
+                "title": drill["title"],
+                "drills": drill["drills"],
+                "focus": drill["focus"],
+                "suggestion": drill["suggestion"],
+                "pitfalls": drill.get("pitfalls", []),
+            }
+        )
+        seen_titles.add(drill["title"])
+        if len(recommendations) == 2:
+            break
+    return recommendations
+
+
+def _ensure_practice_recommendations(feedback: dict[str, Any]) -> list[dict[str, Any]]:
+    coaching_focus = feedback.get("coaching_focus")
+    if isinstance(coaching_focus, list):
+        normalized_focus = [item for item in coaching_focus if isinstance(item, dict)]
+        recommendations = _build_practice_recommendations(normalized_focus)
+        if recommendations:
+            return recommendations
+
+    inferred_titles: list[str] = []
+
+    mechanics_overview = feedback.get("mechanics_overview")
+    if isinstance(mechanics_overview, list):
+        for item in mechanics_overview:
+            if isinstance(item, dict):
+                title = item.get("title")
+                if isinstance(title, str) and title:
+                    inferred_titles.append(title)
+
+    priorities = feedback.get("priorities")
+    if isinstance(priorities, list):
+        for item in priorities:
+            if isinstance(item, str) and item:
+                inferred_titles.append(item)
+
+    diagnosis = str(feedback.get("primary_diagnosis") or "")
+    if "ブレーキ" in diagnosis or "前に出すぎ" in diagnosis:
+        inferred_titles.append("最初の一歩")
+    if "上に逃げ" in diagnosis or "低く前" in diagnosis:
+        inferred_titles.append("前への出方")
+    if "踏んだ力" in diagnosis or "押し切" in diagnosis:
+        inferred_titles.append("地面の押し方")
+    if "回転" in diagnosis or "3歩" in diagnosis or "流れ" in diagnosis:
+        inferred_titles.append("加速のつながり")
+    if "腕" in diagnosis or "タイミング" in diagnosis:
+        inferred_titles.append("腕と脚の合わせ")
+    if "姿勢" in diagnosis or "構え" in diagnosis:
+        inferred_titles.append("スタートの構え")
+
+    seen_titles: set[str] = set()
+    inferred_focus = []
+    for title in inferred_titles:
+        score_key = _score_key_from_title(title)
+        if not score_key or title in seen_titles:
+            continue
+        inferred_focus.append({"title": SCORE_LABELS[score_key]})
+        seen_titles.add(title)
+
+    recommendations = _build_practice_recommendations(inferred_focus)
+    if recommendations:
+        return recommendations
+
+    return [
+        {
+            "title": "スタート基礎を整えるドリル",
+            "drills": ["壁押しスタート", "3歩限定スタート反復"],
+            "focus": "最初の3歩で低く前に出る形と、一歩ごとに押して進む感覚をまとめて作ります。",
+            "suggestion": "まずは壁押しスタートと3歩限定の反復を行い、低い姿勢のまま一歩ごとに地面を押して前に進む感覚を整えてください。細かいことより、最初の3歩の流れをそろえることを優先しましょう。",
+            "pitfalls": [
+                "最初から速く動こうとして形を崩さないこと",
+                "一歩目だけで終わらず、三歩目まで同じ流れを続けること",
+            ],
+        }
+    ]
+
+
+def _score_key_from_title(title: str) -> str | None:
+    for key, label in SCORE_LABELS.items():
+        if label == title:
+            return key
+    return None

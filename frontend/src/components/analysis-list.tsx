@@ -1,6 +1,20 @@
 import Link from "next/link";
 import { AnalysisSummary } from "@/lib/types";
+import { PENDING_ANALYSIS_STALE_MS } from "@/lib/auth";
 import { toHundredPointScore } from "@/lib/score";
+
+function isResolvableAnalysis(analysis: AnalysisSummary) {
+  if (analysis.status === "completed" || analysis.status === "failed") {
+    return true;
+  }
+
+  const createdAtMs = new Date(analysis.created_at).getTime();
+  if (Number.isNaN(createdAtMs)) {
+    return false;
+  }
+
+  return Date.now() - createdAtMs <= PENDING_ANALYSIS_STALE_MS;
+}
 
 export function AnalysisList({
   analyses,
@@ -11,6 +25,7 @@ export function AnalysisList({
   totalCount: number;
   showAll: boolean;
 }) {
+  const visibleAnalyses = analyses.filter(isResolvableAnalysis);
   const statusLabel: Record<string, string> = {
     uploaded: "アップロード済み",
     queued: "待機中",
@@ -25,9 +40,11 @@ export function AnalysisList({
         <div>
           <p className="text-xs uppercase tracking-[0.35em] text-fog">最近のアップロード</p>
           <h2 className="mt-3 text-2xl font-semibold">解析一覧</h2>
-          {totalCount > 0 ? (
+          {visibleAnalyses.length > 0 ? (
             <p className="mt-2 text-sm text-fog">
-              {showAll ? `全${totalCount}件を表示中` : `直近${Math.min(totalCount, analyses.length)}件を表示中`}
+              {showAll
+                ? `表示可能な${visibleAnalyses.length}件を表示中`
+                : `直近${Math.min(visibleAnalyses.length, analyses.length)}件を表示中`}
             </p>
           ) : null}
         </div>
@@ -50,12 +67,12 @@ export function AnalysisList({
       </div>
 
       <div className="mt-6 space-y-3">
-        {analyses.length === 0 ? (
+        {visibleAnalyses.length === 0 ? (
           <div className="rounded-[1.5rem] border border-dashed border-white/10 bg-black/20 px-4 py-6 text-sm leading-7 text-fog">
             まだ解析履歴がありません。右上の「解析する」から動画をアップロードすると、ここに最新の結果が並びます。
           </div>
         ) : (
-          analyses.map((analysis) => (
+          visibleAnalyses.map((analysis) => (
             <Link
               key={analysis.id}
               href={`/result/${analysis.id}`}

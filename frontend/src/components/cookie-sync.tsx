@@ -1,20 +1,28 @@
 "use client";
 
 import { useEffect } from "react";
-import { buildTokenCookie, buildAuthCookie } from "@/lib/auth";
+import { buildTokenCookie, buildAuthCookie, getStoredAuthToken } from "@/lib/auth";
 
 export function CookieSync() {
   useEffect(() => {
-    const token = localStorage.getItem("start-ai-token");
+    const persistentToken = localStorage.getItem("start-ai-token");
+    const token = getStoredAuthToken();
     if (!token) return;
+    const persistent = Boolean(persistentToken);
 
-    const hasCookie = document.cookie
+    const hasTokenCookie = document.cookie
       .split(";")
       .some((c) => c.trim().startsWith("start-ai-token="));
+    const hasSessionCookie = document.cookie
+      .split(";")
+      .some((c) => c.trim().startsWith("start-ai-session="));
 
-    if (!hasCookie) {
-      document.cookie = buildAuthCookie();
-      document.cookie = buildTokenCookie(token);
+    if (!hasSessionCookie) {
+      document.cookie = buildAuthCookie(persistent);
+    }
+
+    if (!hasTokenCookie) {
+      document.cookie = buildTokenCookie(token, persistent);
     }
   }, []);
 

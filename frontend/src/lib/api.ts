@@ -1,5 +1,5 @@
 import { AnalysisDetail, AnalysisSummary, AuthResponse, LoginPayload } from "@/lib/types";
-import { AUTH_TOKEN_COOKIE_NAME } from "@/lib/auth";
+import { AUTH_TOKEN_COOKIE_NAME, getLocalStorageItem, getSessionStorageItem } from "@/lib/auth";
 
 function getApiBaseUrl() {
   if (typeof window !== "undefined") {
@@ -13,7 +13,7 @@ async function getAuthHeaders(initHeaders?: HeadersInit): Promise<Headers> {
   const headers = new Headers(initHeaders ?? {});
 
   if (typeof window !== "undefined") {
-    const token = localStorage.getItem("start-ai-token");
+    const token = getLocalStorageItem("start-ai-token") ?? getSessionStorageItem("start-ai-token");
     if (token) {
       headers.set("Authorization", `Bearer ${token}`);
     }

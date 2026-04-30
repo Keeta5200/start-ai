@@ -1,7 +1,14 @@
 "use client";
 
-import { FormEvent, useState } from "react";
-import { useRouter } from "next/navigation";
+import { FormEvent, useEffect, useState } from "react";
+import {
+  buildAuthCookie,
+  buildTokenCookie,
+  getLocalStorageItem,
+  getSessionStorageItem,
+  getStoredAuthToken,
+  savePendingAnalysis,
+} from "@/lib/auth";
 
 function getApiBaseUrl() {
   if (typeof window !== "undefined") {
@@ -11,12 +18,48 @@ function getApiBaseUrl() {
   return "http://127.0.0.1:8000/api/v1";
 }
 
+function getUploadApiBaseUrl() {
+  if (typeof window === "undefined") {
+    return "http://127.0.0.1:8000/api/v1";
+  }
+
+  if (window.location.hostname.endsWith(".up.railway.app")) {
+    return "https://backend-production-29b9.up.railway.app/api/v1";
+  }
+
+  return "/api/proxy";
+}
+
+function getUploadApiBaseUrls() {
+  const primary = getUploadApiBaseUrl();
+  const urls = [primary];
+
+  if (primary !== "/api/proxy") {
+    urls.push("/api/proxy");
+  }
+
+  return urls;
+}
+
 export function UploadForm() {
-  const router = useRouter();
   const [file, setFile] = useState<File | null>(null);
   const [message, setMessage] = useState("スタート局面の動画をアップロードすると、解析を開始します。");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    if (!isSubmitting) {
+      return;
+    }
+
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = "";
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [isSubmitting]);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -32,23 +75,73 @@ export function UploadForm() {
     const formData = new FormData();
     formData.append("file", file);
     formData.append("step_count", "3");
+    let uploadCompleted = false;
 
     try {
-      const data = await uploadWithProgress(formData, (value) => {
-        setProgress(value);
-        if (value < 100) {
-          setMessage(`動画をアップロード中... ${value}%`);
-        } else {
-          setMessage("アップロード完了。解析を開始しています...");
-        }
+      setMessage("解析サーバーを準備しています...");
+      await warmupAnalysisBackend();
+      const data = await uploadWithRetry(formData, {
+        onProgress: (value) => {
+          setProgress(value);
+          if (value < 100) {
+            setMessage(`動画をアップロード中... ${value}%`);
+          } else {
+            uploadCompleted = true;
+            setMessage("アップロード完了。解析を開始しています...");
+          }
+        },
+        onRetry: () => {
+          if (uploadCompleted) {
+            setProgress(100);
+            setMessage("アップロードは完了しています。解析ジョブを確認しています...");
+            return;
+          }
+
+          setMessage("通信が不安定なため、アップロードを再試行しています...");
+        },
       });
-      router.push(`/result/${data.analysis_id}`);
+      try {
+        const persistentToken = getLocalStorageItem("start-ai-token");
+        const token = getStoredAuthToken();
+        if (token) {
+          const persistent = Boolean(persistentToken);
+          document.cookie = buildAuthCookie(persistent);
+          document.cookie = buildTokenCookie(token, persistent);
+        }
+        savePendingAnalysis({
+          id: data.analysis_id,
+          createdAt: new Date().toISOString(),
+          videoFilename: file.name,
+        });
+      } catch {
+        // Storage sync can fail on some mobile browsers; still continue to the result page.
+      }
+      window.location.assign(`/result/${data.analysis_id}`);
     } catch (err) {
-      if (err instanceof UploadError && err.status === 401) {
-        router.push("/login");
+      const recoveredAnalysis = uploadCompleted ? await recoverRecentAnalysis(file.name) : null;
+      if (recoveredAnalysis) {
+        try {
+          savePendingAnalysis({
+            id: recoveredAnalysis.id,
+            createdAt: recoveredAnalysis.created_at,
+            videoFilename: recoveredAnalysis.video_filename,
+          });
+        } catch {
+          // Ignore storage issues on restrictive mobile browsers and continue.
+        }
+        window.location.assign(`/result/${recoveredAnalysis.id}`);
         return;
       }
-      setMessage("アップロードに失敗しました。時間をおいて再度お試しください。");
+
+      if (err instanceof UploadError && err.status === 401) {
+        window.location.assign("/login");
+        return;
+      }
+      if (err instanceof UploadError && err.status === 413) {
+        setMessage("動画サイズが大きすぎてアップロードできませんでした。短めに切り出して再度お試しください。");
+      } else {
+        setMessage("アップロードまたは解析開始に失敗しました。通信状況を確認して、もう一度お試しください。");
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -124,17 +217,58 @@ class UploadError extends Error {
   }
 }
 
+async function warmupAnalysisBackend(): Promise<void> {
+  let lastError: UploadError | null = null;
+
+  for (const baseUrl of getUploadApiBaseUrls()) {
+    for (let attempt = 1; attempt <= 4; attempt += 1) {
+      try {
+        const response = await fetch(`${baseUrl}/health`, {
+          method: "GET",
+          cache: "no-store",
+        });
+
+        if (response.ok) {
+          return;
+        }
+
+        lastError = new UploadError(response.status);
+        if (!shouldRetryWarmup(response.status) || attempt === 4) {
+          break;
+        }
+      } catch (error) {
+        if (error instanceof UploadError) {
+          lastError = error;
+        } else {
+          lastError = new UploadError(0);
+        }
+
+        if (attempt === 4) {
+          break;
+        }
+      }
+
+      await wait(1500 * attempt);
+    }
+  }
+
+  throw lastError ?? new UploadError(0);
+}
+
 function uploadWithProgress(
   formData: FormData,
-  onProgress: (value: number) => void
+  onProgress: (value: number) => void,
+  baseUrl: string
 ): Promise<{ analysis_id: string }> {
   return new Promise((resolve, reject) => {
     const request = new XMLHttpRequest();
-    request.open("POST", `${getApiBaseUrl()}/uploads/video`);
-    const token = localStorage.getItem("start-ai-token");
+    request.open("POST", `${baseUrl}/uploads/video`);
+    request.withCredentials = true;
+    const token = getStoredAuthToken();
     if (token) {
       request.setRequestHeader("Authorization", `Bearer ${token}`);
     }
+    request.timeout = 1000 * 60 * 5;
 
     request.upload.onprogress = (event) => {
       if (!event.lengthComputable) return;
@@ -148,10 +282,196 @@ function uploadWithProgress(
         return;
       }
       onProgress(100);
-      resolve(JSON.parse(request.responseText) as { analysis_id: string });
+      try {
+        resolve(JSON.parse(request.responseText) as { analysis_id: string });
+      } catch {
+        reject(new UploadError(500));
+      }
     };
 
     request.onerror = () => reject(new UploadError(0));
+    request.ontimeout = () => reject(new UploadError(408));
+    request.onabort = () => reject(new UploadError(499));
     request.send(formData);
   });
+}
+
+type UploadWithRetryOptions = {
+  onProgress: (value: number) => void;
+  onRetry: (attempt: number, totalAttempts: number) => void;
+};
+
+async function uploadWithRetry(
+  formData: FormData,
+  { onProgress, onRetry }: UploadWithRetryOptions
+): Promise<{ analysis_id: string }> {
+  let lastError: UploadError | null = null;
+  let retryCount = 0;
+  const baseUrls = getUploadApiBaseUrls();
+  const totalAttempts = Math.max(1, baseUrls.length * 3 - 1);
+
+  for (const baseUrl of baseUrls) {
+    let uploadBodyCompleted = false;
+
+    for (let attempt = 1; attempt <= 3; attempt += 1) {
+      try {
+        return await uploadWithProgress(
+          formData,
+          (value) => {
+            if (value >= 100) {
+              uploadBodyCompleted = true;
+            }
+
+            onProgress(value);
+          },
+          baseUrl
+        );
+      } catch (error) {
+        if (!(error instanceof UploadError)) {
+          throw error;
+        }
+
+        lastError = error;
+
+        if (uploadBodyCompleted) {
+          throw error;
+        }
+
+        if (!shouldRetryUpload(error.status)) {
+          break;
+        }
+
+        retryCount += 1;
+        onRetry(retryCount, totalAttempts);
+        await wait(1200 * attempt);
+      }
+    }
+  }
+
+  throw lastError ?? new UploadError(0);
+}
+
+function shouldRetryUpload(status: number) {
+  return status === 0 || status === 408 || status === 429 || status === 499 || status === 500 || status === 502 || status === 503 || status === 504;
+}
+
+function shouldRetryWarmup(status: number) {
+  return status === 0 || status === 408 || status === 425 || status === 429 || status === 499 || status === 500 || status === 502 || status === 503 || status === 504;
+}
+
+function wait(ms: number) {
+  return new Promise((resolve) => window.setTimeout(resolve, ms));
+}
+
+type RecentAnalysis = {
+  id: string;
+  status: "uploaded" | "queued" | "processing" | "completed" | "failed";
+  score: number;
+  video_filename: string;
+  created_at: string;
+};
+
+async function recoverRecentAnalysis(fileName: string): Promise<RecentAnalysis | null> {
+  const recoveryDeadline = Date.now() + 1000 * 20;
+
+  while (Date.now() < recoveryDeadline) {
+    try {
+      const response = await fetch(`${getApiBaseUrl()}/analyses`, {
+        cache: "no-store",
+        credentials: "include",
+        headers: buildAuthHeaders(),
+      });
+
+      if (response.ok) {
+        const analyses = ((await response.json()) as RecentAnalysis[]).slice().sort((a, b) => {
+          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+        });
+        const recoveredAnalysis = selectRecentAnalysisCandidate(analyses, fileName);
+
+        if (recoveredAnalysis) {
+          return recoveredAnalysis;
+        }
+      }
+    } catch {
+      // Keep polling briefly; mobile networks often fail after the upload body
+      // finishes even though the backend has already created the analysis job.
+    }
+
+    await wait(2500);
+  }
+
+  return null;
+}
+
+function selectRecentAnalysisCandidate(
+  analyses: RecentAnalysis[],
+  fileName: string
+): RecentAnalysis | null {
+  const now = Date.now();
+  const exactCutoff = now - 1000 * 60 * 20;
+  const fuzzyCutoff = now - 1000 * 60 * 5;
+  const normalizedFileName = normalizeAnalysisFilename(fileName);
+  const normalizedStem = stripFilenameExtension(normalizedFileName);
+
+  const exactMatch = analyses.find((analysis) => {
+    if (analysis.status === "failed") {
+      return false;
+    }
+
+    if (new Date(analysis.created_at).getTime() < exactCutoff) {
+      return false;
+    }
+
+    return normalizeAnalysisFilename(analysis.video_filename) === normalizedFileName;
+  });
+
+  if (exactMatch) {
+    return exactMatch;
+  }
+
+  const stemMatch = analyses.find((analysis) => {
+    if (analysis.status === "failed") {
+      return false;
+    }
+
+    if (new Date(analysis.created_at).getTime() < exactCutoff) {
+      return false;
+    }
+
+    return stripFilenameExtension(normalizeAnalysisFilename(analysis.video_filename)) === normalizedStem;
+  });
+
+  if (stemMatch) {
+    return stemMatch;
+  }
+
+  return (
+    analyses.find((analysis) => {
+      if (analysis.status === "failed") {
+        return false;
+      }
+
+      return new Date(analysis.created_at).getTime() >= fuzzyCutoff;
+    }) ?? null
+  );
+}
+
+function normalizeAnalysisFilename(fileName: string) {
+  return fileName.normalize("NFKC").trim().toLowerCase();
+}
+
+function stripFilenameExtension(fileName: string) {
+  return fileName.replace(/\.[^.]+$/, "");
+}
+
+function buildAuthHeaders(): Record<string, string> {
+  const token = getStoredAuthToken();
+
+  if (!token) {
+    return {};
+  }
+
+  return {
+    Authorization: `Bearer ${token}`,
+  };
 }
